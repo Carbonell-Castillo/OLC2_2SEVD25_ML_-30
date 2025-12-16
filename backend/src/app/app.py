@@ -2,17 +2,19 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
 from werkzeug.utils import secure_filename
+# Asegúrate de que estas importaciones sean correctas
 from src.data.data_loader import DataLoader
 from src.data.data_cleaner import DataCleaner
 from src.ml.training import train_model
 from src.ml.prediction import predict_risk
 
 import pandas as pd
+import numpy as np
 
-# CONFIGURACIÓN INICIAL DE FLASK
 
 app = Flask(__name__)
-CORS(app)
+
+CORS(app) 
 
 # CONFIGURACIÓN DE SUBIDA DE ARCHIVOS
 
@@ -26,7 +28,7 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Máximo 16MB
 
 current_data = None
 cleaned_data = None
-
+last_metrics_results = None
 # INICIALIZAR NUESTRAS CLASES
 
 loader = DataLoader(UPLOAD_FOLDER)
@@ -42,7 +44,7 @@ def allowed_file(filename):
 
 def convert_to_serializable(obj):
     """
-    NUEVO: Convierte tipos numpy a tipos nativos de Python para JSON
+    Convierte tipos numpy a tipos nativos de Python para JSON
     """
     if isinstance(obj, dict):
         return {key: convert_to_serializable(value) for key, value in obj.items()}
@@ -50,7 +52,10 @@ def convert_to_serializable(obj):
         return [convert_to_serializable(item) for item in obj]
     elif pd.isna(obj):
         return None
-    elif hasattr(obj, 'item'):  # numpy types
+    # Maneja tipos numéricos de NumPy (int, float)
+    elif isinstance(obj, (np.integer, np.floating)):
+        return obj.item()
+    elif hasattr(obj, 'item'):  # otros tipos numpy
         return obj.item()
     return obj
 
@@ -61,7 +66,7 @@ def convert_to_serializable(obj):
 @app.route('/api/health', methods=['GET'])
 def health_check():
     """
-    Endpoint simple para verificar que el servidor esté funcionando
+    Endpoint para verificar que el servidor esté funcionando
     """
     return jsonify({
         'status': 'ok',
@@ -77,27 +82,27 @@ def upload_file():
     """
     global current_data
     
-    # PASO 1: Verificar que se envió un archivo
+    # Verificar que se envió un archivo
     if 'file' not in request.files:
         return jsonify({'error': 'No se envió ningún archivo'}), 400
     
     file = request.files['file']
     
-    # PASO 2: Verificar que se seleccionó un archivo
+    # Verificar que se seleccionó un archivo
     if file.filename == '':
         return jsonify({'error': 'No se seleccionó ningún archivo'}), 400
     
-    # PASO 3: Verificar que sea un CSV
+    # Verificar que sea un CSV
     if not allowed_file(file.filename):
         return jsonify({'error': 'Solo se permiten archivos CSV'}), 400
     
     try:
-        # PASO 4: Guardar el archivo de forma segura
+        # Guardar el archivo de forma segura
         filename = secure_filename(file.filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
-        
-        # PASO 5: Cargar y validar el CSV
+    
+        # Cargar y validar el CSV
         df, error = loader.load_csv(filepath)
         
         if error:
@@ -106,20 +111,21 @@ def upload_file():
                 os.remove(filepath)
             return jsonify({'error': error}), 400
         
-        # PASO 6: Guardar los datos en memoria
+        # Guardar los datos en memoria
         current_data = df
         
-        # PASO 7: Obtener información del dataset
+        # Obtener información del dataset
         info = loader.get_data_info(df)
         
-        # PASO 8: Preparar preview (primeras 10 filas)
+        # Preparar preview (primeras 10 filas)
         preview_data = df.head(10).copy()
-        preview_data = preview_data.where(pd.notnull(preview_data), None)
+        # Reemplazar NaN con None (que se traduce a null en JSON)
+        preview_data = preview_data.where(pd.notnull(preview_data), None) 
         preview_dict = preview_data.to_dict('records')
         
-        # PASO 9: Convertir a tipos serializables
+        # Convertir info y preview a tipos serializables (soluciona el error de NumPy/JSON)
         preview_dict = convert_to_serializable(preview_dict)
-        info = convert_to_serializable(info)
+        info = convert_to_serializable(info) 
         
         return jsonify({
             'message': 'Archivo cargado exitosamente',
@@ -129,6 +135,9 @@ def upload_file():
         }), 200
     
     except Exception as e:
+        # En caso de error, imprime el traceback en la consola del backend para diagnóstico
+        import traceback
+        traceback.print_exc()
         return jsonify({'error': f'Error al procesar archivo: {str(e)}'}), 500
 
 
@@ -195,15 +204,15 @@ def clean_data():
 @app.route('/api/train', methods=['POST'])
 def train():
     """
-    se entrena el modelo de riesgo usando los datos limpios actuales.
+    Se entrena el modelo de riesgo usando los datos limpios actuales.
     Devuelve las métricas principales (accuracy, precision, recall, f1).
     """
-    global cleaned_data
+    global cleaned_data, last_metrics_results
 
     # 1) Verificar que ya haya datos limpios
     if cleaned_data is None:
         return jsonify({
-            "error": "No hay datos limpios. Primero usa /api/clean."
+            "error": "No hay datos limpios. Primero Limpia los datos."
         }), 400
 
     try:
@@ -213,6 +222,8 @@ def train():
 
         # 2) Llamar a la función de entrenamiento
         metrics = train_model(cleaned_data)
+        # Guardar las métricas y la matriz de confusión globalmente
+        last_metrics_results = metrics
 
         print("\n Entrenamiento completado")
         print(f"   - Accuracy:  {metrics['accuracy']:.3f}")
@@ -222,6 +233,8 @@ def train():
         print(f"   - Modelo guardado en: {metrics['model_path']}")
 
         # 3) Devolver métricas al frontend
+        metrics = convert_to_serializable(metrics)
+        
         return jsonify({
             "message": "Modelo entrenado exitosamente",
             "metrics": metrics
@@ -233,7 +246,67 @@ def train():
         return jsonify({
             "error": f"Error al entrenar modelo: {str(e)}"
         }), 500
- 
+    
+
+@app.route('/api/train_with_params', methods=['POST'])
+def train_with_params():
+    """
+    Entrena el modelo con hiperparámetros personalizados.
+    """
+    global cleaned_data, last_metrics_results
+
+    # Verificar que haya datos limpios
+    if cleaned_data is None:
+        return jsonify({
+            "error": "No hay datos limpios. Primero Limpia los datos."
+        }), 400
+
+    try:
+        print("\n" + "=" * 60)
+        print("ENTRENAMIENTO CON HIPERPARÁMETROS PERSONALIZADOS")
+        print("=" * 60)
+        
+        # Obtener hiperparámetros del body (si no se envían, usa defaults)
+        data = request.get_json() or {}
+        
+        hyperparams = {
+            'max_iter': data.get('max_iter', 1000),
+            'C': data.get('C', 0.5),
+            'solver': data.get('solver', 'lbfgs')
+        }
+        
+        print(f"\n Hiperparámetros recibidos:")
+        print(f"   - max_iter: {hyperparams['max_iter']}")
+        print(f"   - C: {hyperparams['C']}")
+        print(f"   - solver: {hyperparams['solver']}")
+        
+        # Importar función de entrenamiento con parámetros
+        from src.ml.training import train_model_with_params
+        
+        # Entrenar con parámetros personalizados
+        metrics = train_model_with_params(cleaned_data, hyperparams)
+        # Guardar las métricas y la matriz de confusión globalmente
+        last_metrics_results = metrics
+        metrics = convert_to_serializable(metrics)
+
+        return jsonify({
+            "message": "Modelo entrenado con hiperparámetros personalizados",
+            "metrics": metrics
+        }), 200
+
+    except ValueError as e:
+        # Errores de validación
+        return jsonify({
+            "error": str(e)
+        }), 400
+
+    except Exception as e:
+        print(f"\n ERROR EN ENTRENAMIENTO: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({
+            "error": f"Error al entrenar modelo: {str(e)}"
+        }), 500
 
 
 @app.route('/api/predict', methods=['POST'])
@@ -251,13 +324,15 @@ def predict():
 
         result = predict_risk(data)
 
+        result = convert_to_serializable(result)
+
         return jsonify({
             "message": "Predicción generada correctamente",
             "result": result
         }), 200
 
     except ValueError as e:
-        # Errores de validación (campos faltantes, tipos, modelo no entrenado, etc.)
+        # Errores de validación (campos faltantes, tipos, modelo no entrenado)
         return jsonify({
             "error": str(e)
         }), 400
@@ -268,7 +343,6 @@ def predict():
         return jsonify({
             "error": f"Error interno al generar la predicción: {str(e)}"
         }), 500
-
 
 
 @app.route('/api/data/info', methods=['GET'])
@@ -343,7 +417,7 @@ def export_cleaned_data():
 @app.route('/api/data/compare', methods=['GET'])
 def compare_data():
     """
-    NUEVO: Compara datos originales vs datos limpios
+    Compara datos originales con datos limpios
     """
     global current_data, cleaned_data
     
@@ -375,16 +449,63 @@ def compare_data():
         return jsonify({'error': f'Error al comparar datos: {str(e)}'}), 500
 
 
+@app.route('/api/get_metrics', methods=['GET'])
+def get_metrics():
+    """
+    Devuelve las métricas del último entrenamiento, incluyendo la matriz de confusión.
+    """
+    global last_metrics_results
+    print("last_metrics_results content:", last_metrics_results) # Mantener para depuración
+    
+    # 1) Verificar que se haya entrenado el modelo al menos una vez
+    if last_metrics_results is None:
+        return jsonify({
+            "error": "Modelo no entrenado. Primero entrena un modelo usando /api/train o /api/train_with_params."
+        }), 404
+
+    try:
+     
+        response_data = {
+            "message": "Métricas de evaluación cargadas correctamente.",
+            "metrics": last_metrics_results,  # El objeto de métricas
+            "confusion_matrix": last_metrics_results.get('confusion_matrix', {
+
+                "true_positives": 0,
+                "false_positives": 0,
+                "false_negatives": 0,
+                "true_negatives": 0,
+            })
+        }
+
+        # 3) Asegurar la serialización
+        response_data = convert_to_serializable(response_data)
+        
+        f1_score = response_data['metrics'].get('f1_score', 0.0) # Usar .get() por seguridad
+        
+        print("\n" + "=" * 60)
+        print(" MÉTRICAS DE EVALUACIÓN DEVUELTAS")
+        print(f" - F1 Score: {f1_score:.3f}") # ¡CORREGIDO!
+        print("=" * 60)
+        
+        return jsonify(response_data), 200
+
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({
+            "error": f"Error al recuperar métricas: {str(e)}"
+        }), 500
 @app.route('/api/reset', methods=['POST'])
 def reset_data():
     """
     Reinicia todo el sistema
     """
-    global current_data, cleaned_data
+    global current_data, cleaned_data, last_metrics_results
     
     # Limpiar variables globales
     current_data = None
     cleaned_data = None
+    last_metrics_results = None
     
     # Limpiar archivos temporales
     try:
@@ -393,7 +514,7 @@ def reset_data():
             if os.path.isfile(file_path):
                 os.unlink(file_path)
         
-        print("\n🔄 Sistema reiniciado correctamente\n")
+        print("\n Sistema reiniciado correctamente\n")
         
         return jsonify({
             'message': 'Sistema reiniciado correctamente'
@@ -403,7 +524,8 @@ def reset_data():
         return jsonify({
             'error': f'Error al reiniciar sistema: {str(e)}'
         }), 500
-
+    
+    
 
 # ============================================================================
 # MANEJO DE ERRORES
@@ -447,29 +569,26 @@ def request_entity_too_large(error):
 # ============================================================================
 
 if __name__ == '__main__':
-    # Crear carpeta de uploads si no existe
     if not os.path.exists(UPLOAD_FOLDER):
         os.makedirs(UPLOAD_FOLDER)
     
-    # Banner de bienvenida
     print("\n" + "=" * 60)
     print(" StudentGuard Backend v1.0.0")
     print("=" * 60)
     print("\n Endpoints disponibles:")
-    print("  • GET  /api/health           - Verificar estado del servidor")
-    print("  • POST /api/upload           - Cargar archivo CSV")
-    print("  • POST /api/clean            - Limpiar datos cargados")
-    print("  • GET  /api/data/info        - Información de los datos")
-    print("  • GET  /api/data/compare     - Comparar datos originales vs limpios")
-    print("  • GET  /api/data/export      - Exportar datos limpios")
-    print("  • POST /api/reset            - Reiniciar el sistema")
-    print("  • POST /api/train           - Entrenar modelo de riesgo")
-    print("  • POST /api/predict         - Predecir riesgo de un estudiante")
+    print("   GET  /api/health            - Verificar estado del servidor")
+    print("   POST /api/upload            - Cargar archivo CSV")
+    print("   POST /api/clean             - Limpiar datos cargados")
+    print("   GET  /api/data/info         - Información de los datos")
+    print("   GET  /api/data/compare      - Comparar datos originales vs limpios")
+    print("   GET  /api/data/export       - Exportar datos limpios")
+    print("   POST /api/reset             - Reiniciar el sistema")
+    print("   POST /api/train             - Entrenar modelo de riesgo")
+    print("   POST /api/train_with_params - Entrenar modelo (hiperparámetros personalizados)")
+    print("   POST /api/predict           - Predecir riesgo de un estudiante")
 
     print("\n Servidor corriendo en: http://localhost:5000")
     print("=" * 60)
-    print("\n Presiona Ctrl+C para detener el servidor")
-    print(" Usa Postman para probar los endpoints\n")
     
     # Iniciar servidor
     app.run(debug=True, port=5000, host='0.0.0.0')

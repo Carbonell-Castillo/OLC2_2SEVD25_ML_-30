@@ -12,75 +12,83 @@ from sklearn.metrics import (
     f1_score
 )
 
+from src.config import FEATURE_COLUMNS, TARGET_COLUMN
+
 # Carpeta donde se guardará el modelo
 SAVED_MODELS_DIR = "saved_models"
 MODEL_FILENAME = "studentguard_model.pkl"
 
 
 def train_model(df: pd.DataFrame):
-    """
-    Entrena un modelo de clasificación de riesgo (0 = no riesgo, 1 = riesgo)
-    usando los datos LIMPIOS que ya generaste con DataCleaner.
+    
+    return train_model_with_params(df, hyperparams=None)
 
-    Parámetros
-    ----------
-    df : pd.DataFrame
-        DataFrame con los datos LIMPIOS. Debe incluir la columna 'riesgo'
-        como variable objetivo (0/1).
 
-    Returns
-    -------
-    dict
-        Diccionario con las métricas del modelo y la ruta donde se guardó:
-        {
-            "accuracy": ...,
-            "precision": ...,
-            "recall": ...,
-            "f1_score": ...,
-            "n_train": ...,
-            "n_test": ...,
-            "model_path": "saved_models/studentguard_model.pkl"
-        }
-    """
+def train_model_with_params(df: pd.DataFrame, hyperparams: dict = None):
 
-    # Asegurar que exista la columna 'riesgo'
-    if "riesgo" not in df.columns:
-        raise ValueError("La columna 'riesgo' no está presente en los datos limpios.")
+    # Valores por defecto de hiperparámetros
+    if hyperparams is None:
+        hyperparams = {}
+    
+    max_iter = hyperparams.get('max_iter', 1000)
+    C = hyperparams.get('C', 0.5)
+    solver = hyperparams.get('solver', 'lbfgs')
 
-    # 1) Quedarnos SOLO con columnas numéricas
-    #    (ignoramos carnet, first_name, last_name, gender, etc.)
-    numeric_df = df.select_dtypes(include=[np.number]).copy()
+    if TARGET_COLUMN not in df.columns:
+        raise ValueError(f"La columna '{TARGET_COLUMN}' no está presente en los datos limpios.")
 
-    if "riesgo" not in numeric_df.columns:
-        raise ValueError("La columna 'riesgo' no es numérica después de la limpieza.")
+    # Verificar que existan todas las columnas necesarias
+    missing_cols = [col for col in FEATURE_COLUMNS if col not in df.columns]
+    if missing_cols:
+        raise ValueError(f"Faltan las siguientes columnas: {', '.join(missing_cols)}")
 
-    # 2) Separar features (X) y etiqueta (y)
-    X = numeric_df.drop(columns=["riesgo"])
-    y = numeric_df["riesgo"]
+    # Extraer  las columnas necesairas
+    X = df[FEATURE_COLUMNS].copy()
+    y = df[TARGET_COLUMN].copy()
 
-    # Convertir a numpy (por si acaso)
+    print(f"\n Entrenando con {len(FEATURE_COLUMNS)} features:")
+    for i, col in enumerate(FEATURE_COLUMNS, 1):
+        print(f"   {i}. {col}")
+    
+    print(f"\n Total de muestras: {len(X)}")
+    print(f"   - Riesgo (1): {int(y.sum())} ({100*y.mean():.1f}%)")
+    print(f"   - No Riesgo (0): {int((1-y).sum())} ({100*(1-y.mean()):.1f}%)")
+
+    print(f"\n Hiperparámetros del modelo:")
+    print(f"   - max_iter: {max_iter}")
+    print(f"   - C (regularización): {C}")
+    print(f"   - solver: {solver}")
+
+    # Convertir a numpy
     X = X.values
     y = y.values
 
-    # 3) Separar train / test
+    # Separar train / test
     X_train, X_test, y_train, y_test = train_test_split(
         X,
         y,
         test_size=0.2,
         random_state=42,
-        stratify=y  # mantiene proporción de clases
+        stratify=y 
     )
 
-    # 4) Definir modelo (Logistic Regression como base)
-    model = LogisticRegression(max_iter=1000)
+    # Definir modelo con hiperparámetros personalizados
+    model = LogisticRegression(
+        max_iter=max_iter,
+        C=C,
+        solver=solver,
+        random_state=42
+    )
 
-    # 5) Entrenar
+    # Entrenar
+    print("\n Entrenando modelo...")
     model.fit(X_train, y_train)
+    print("    Entrenamiento completado")
 
-    # 6) Predecir en test
+    # Predecir en test
     y_pred = model.predict(X_test)
 
-    # 7) Calcular métricas
+    # Calcular métricas
     metrics = {
         "accuracy": float(accuracy_score(y_test, y_pred)),
         "precision": float(precision_score(y_test, y_pred, zero_division=0)),
@@ -88,15 +96,25 @@ def train_model(df: pd.DataFrame):
         "f1_score": float(f1_score(y_test, y_pred, zero_division=0)),
         "n_train": int(len(y_train)),
         "n_test": int(len(y_test)),
+        "hyperparams_used": {
+            "max_iter": max_iter,
+            "C": C,
+            "solver": solver
+        }
     }
 
-    # 8) Asegurar que exista la carpeta de modelos
     os.makedirs(SAVED_MODELS_DIR, exist_ok=True)
 
-    # 9) Guardar modelo entrenado
     model_path = os.path.join(SAVED_MODELS_DIR, MODEL_FILENAME)
     joblib.dump(model, model_path)
 
     metrics["model_path"] = model_path
+
+    print(f"\n Modelo guardado en: {model_path}")
+    print(f"\n Métricas del modelo:")
+    print(f"   • Accuracy:  {metrics['accuracy']:.3f}")
+    print(f"   • Precision: {metrics['precision']:.3f}")
+    print(f"   • Recall:    {metrics['recall']:.3f}")
+    print(f"   • F1-Score:  {metrics['f1_score']:.3f}")
 
     return metrics

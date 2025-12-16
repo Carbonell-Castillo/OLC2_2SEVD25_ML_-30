@@ -1,5 +1,10 @@
 <h2 class="text-3xl font-bold text-white mb-8"><i class="fas fa-magic text-accent-cyan mr-2"></i> Predicción de Riesgo Individual</h2>
 
+<div *ngIf="errorMessage" class="bg-red-900/50 text-red-300 p-4 rounded-lg mb-4 flex justify-between items-center">
+    <p><i class="fas fa-exclamation-triangle mr-2"></i> {{ errorMessage }}</p>
+    <button (click)="errorMessage = null" class="text-red-300 hover:text-white"><i class="fas fa-times"></i></button>
+</div>
+
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     
     <div class="lg:col-span-2 bg-card-dark p-8 rounded-xl shadow-2xl">
@@ -8,53 +13,63 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1">Promedio actual</label>
-                <input type="number" placeholder="Ej: 9.2" class="input-dark">
+                <input type="number" [(ngModel)]="predictionInput.promedio_actual" placeholder="Ej: 9.2" class="input-dark">
             </div>
             
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1">Asistencia a clases (%)</label>
-                <input type="number" placeholder="Ej: 95" class="input-dark">
+                <input type="number" [(ngModel)]="predictionInput.asistencia_clases" placeholder="Ej: 95" class="input-dark">
             </div>
             
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1">Tareas entregadas (%)</label>
-                <input type="number" placeholder="Ej: 80" class="input-dark">
+                <input type="number" [(ngModel)]="predictionInput.tareas_entregadas" placeholder="Ej: 80" class="input-dark">
             </div>
             
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1">Participación en clase (Puntaje)</label>
-                <input type="number" placeholder="Ej: 7" class="input-dark">
+                <input type="number" [(ngModel)]="predictionInput.participacion_clase" placeholder="Ej: 7" class="input-dark">
             </div>
             
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1">Horas de estudio (Semanales)</label>
-                <input type="number" placeholder="Ej: 15" class="input-dark ">
+                <input type="number" [(ngModel)]="predictionInput.horas_estudio" placeholder="Ej: 15" class="input-dark ">
             </div>
             
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1">Actividades extracurriculares (Cantidad)</label>
-                <input type="number" placeholder="Ej: 2" class="input-dark">
+                <input type="number" [(ngModel)]="predictionInput.actividades_extracurriculares" placeholder="Ej: 2" class="input-dark">
             </div>
             
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1">Cursos reprobados (Total)</label>
-                <input type="number" placeholder="Ej: 0" class="input-dark">
+                <input type="number" [(ngModel)]="predictionInput.cursos_reprobados" placeholder="Ej: 0" class="input-dark">
             </div>
             
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-1">Reportes disciplinarios (Total)</label>
-                <input type="number" placeholder="Ej: 1" class="input-dark">
+                <input type="number" [(ngModel)]="predictionInput.reportes_disciplinarios" placeholder="Ej: 1" class="input-dark">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-300 mb-1">Promedio de evaluaciones (%)</label>
+                <input type="number" [(ngModel)]="predictionInput.promedio_evaluaciones" placeholder="Ej: 85" class="input-dark">
             </div>
         </div>
 
         <div class="mt-8 flex justify-end space-x-4">
-            <button class="py-3 px-8 rounded-lg bg-gray-600 hover:bg-gray-500 font-medium transition duration-200">
+            <button 
+                (click)="onCancel()"
+                [disabled]="isLoading" 
+                class="py-3 px-8 rounded-lg bg-gray-600 hover:bg-gray-500 font-medium transition duration-200">
                 Cancelar
             </button>
             <button 
-                (click)="onPredictRisk()" 
+                (click)="onPredictRisk()"
+                [disabled]="isLoading"
                 class="py-3 px-8 rounded-lg bg-accent-purple hover:bg-purple-800 font-bold transition duration-200 shadow-lg shadow-purple-900/50">
-                <i class="fas fa-check-circle mr-2"></i> Predecir Riesgo
+                <i *ngIf="!isLoading" class="fas fa-check-circle mr-2"></i> 
+                <i *ngIf="isLoading" class="fas fa-spinner fa-spin mr-2"></i> 
+                {{ isLoading ? 'Prediciendo...' : 'Predecir Riesgo' }}
             </button>
         </div>
     </div>
@@ -62,12 +77,17 @@
     <div #riskCard class="lg:col-span-1 bg-card-dark p-8 rounded-xl shadow-2xl flex flex-col items-center justify-center border-t-4" [ngClass]="riskCardClass">
         <h3 class="text-xl font-semibold text-white mb-6">Resultado de Riesgo</h3>
         
-        <div *ngIf="showPredictionResult" id="prediction-result" class="w-full h-auto text-center p-8 rounded-xl bg-gray-800 transition duration-500">
+        <div *ngIf="showPredictionResult && !isLoading" id="prediction-result" class="w-full h-auto text-center p-8 rounded-xl bg-gray-800 transition duration-500">
             <i class="fas fa-question-circle text-6xl text-gray-500 mb-4"></i>
             <p class="text-gray-400 font-semibold text-lg">Ingrese los datos para predecir</p>
         </div>
+        
+        <div *ngIf="isLoading" class="w-full h-auto text-center p-8 rounded-xl bg-gray-800 transition duration-500">
+            <i class="fas fa-spinner fa-spin text-6xl text-accent-cyan mb-4"></i>
+            <p class="text-accent-cyan font-semibold text-lg">Cargando Predicción...</p>
+        </div>
 
-        <div *ngIf="showRiskDisplay" id="risk-display" class="w-full h-auto text-center p-8 rounded-xl transition duration-500">
+        <div *ngIf="showRiskDisplay && !isLoading" id="risk-display" class="w-full h-auto text-center p-8 rounded-xl transition duration-500">
             <i [class]="riskIconClass"></i>
             <p [class]="riskTextClass" class="mt-2">{{ riskTextContent }}</p>
             <p class="text-sm text-gray-400 mt-2">{{ riskDetailContent }}</p>

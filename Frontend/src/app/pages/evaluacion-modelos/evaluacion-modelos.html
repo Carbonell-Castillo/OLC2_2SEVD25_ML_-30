@@ -1,56 +1,54 @@
-                <section id="evaluacion" class="content-section">
-                    <h2 class="text-3xl font-bold text-white mb-6"><i class="fas fa-chart-line text-accent-purple mr-2"></i> Evaluación de Rendimiento y Predicción</h2>
-                    
-                    <h3 class="text-xl font-semibold text-white mb-4">Métricas del Modelo Entrenado</h3>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-                        
-                        <div class="bg-card-dark p-6 rounded-xl shadow-xl transition duration-300 hover:scale-[1.03] border-l-4 border-accent-purple">
-                            <p class="text-lg font-medium text-gray-400">Exactitud</p>
-                            <p class="text-4xl font-extrabold text-white mt-1">85.63%</p>
-                            <p class="text-sm text-green-400 mt-2"><i class="fas fa-chart-bar mr-1"></i> Rendimiento</p>
-                        </div>
-                        
-                        <div class="bg-card-dark p-6 rounded-xl shadow-xl transition duration-300 hover:scale-[1.03] border-l-4 border-accent-cyan">
-                            <p class="text-lg font-medium text-gray-400">Precisión</p>
-                            <p class="text-4xl font-extrabold text-white mt-1">92.12%</p>
-                            <p class="text-sm text-green-400 mt-2"><i class="fas fa-chart-bar mr-1"></i> Fiabilidad</p>
-                        </div>
-                        
-                        <div class="bg-card-dark p-6 rounded-xl shadow-xl transition duration-300 hover:scale-[1.03] border-l-4 border-accent-purple">
-                            <p class="text-lg font-medium text-gray-400">Recall</p>
-                            <p class="text-4xl font-extrabold text-white mt-1">58.69%</p>
-                            <p class="text-sm text-red-400 mt-2"><i class="fas fa-chart-line mr-1"></i> Área de Mejora</p>
-                        </div>
-                        
-                        <div class="bg-card-dark p-6 rounded-xl shadow-xl transition duration-300 hover:scale-[1.03] border-l-4 border-accent-cyan">
-                            <p class="text-lg font-medium text-gray-400">F1-Score</p>
-                            <p class="text-4xl font-extrabold text-white mt-1">78.56%</p>
-                            <p class="text-sm text-green-400 mt-2"><i class="fas fa-award mr-1"></i> Métrica Clave</p>
-                        </div>
-                    </div>
+<section id="evaluacion" class="content-section">
+    <h2 class="text-3xl font-bold text-white mb-6"><i class="fas fa-chart-line text-accent-purple mr-2"></i> Evaluación de Rendimiento y Predicción</h2>
+    
+    <div *ngIf="errorMessage" class="bg-red-900/50 text-red-300 p-4 rounded-lg mb-4 flex justify-between items-center">
+        <p><i class="fas fa-exclamation-triangle mr-2"></i> {{ errorMessage }}</p>
+        <button (click)="errorMessage = null" class="text-red-300 hover:text-white"><i class="fas fa-times"></i></button>
+    </div>
+    <div *ngIf="isLoading" class="bg-blue-900/50 text-blue-300 p-4 rounded-lg mb-4 flex items-center justify-center">
+        <i class="fas fa-spinner fa-spin mr-2"></i> Cargando métricas de evaluación...
+    </div>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        
-                        <div class="lg:col-span-2 bg-card-dark p-6 rounded-xl shadow-xl">
-                            <h3 class="text-xl font-semibold text-white mb-4 border-b border-gray-700 pb-3">Distribución de Predicción (Gráfico)</h3>
-                            <div class="h-64 bg-primary-dark rounded-lg flex items-center justify-center text-gray-500">
-                                [Placeholder: Gráfico de Dispersión/Líneas de Predicción]
-                            </div>
-                        </div>
+    <div *ngIf="evaluationData as data; else noData">
+        <h3 class="text-xl font-semibold text-white mb-4">Métricas del Modelo Entrenado</h3>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+            
+            <div class="bg-card-dark p-6 rounded-xl shadow-xl transition duration-300 hover:scale-[1.03] border-l-4 border-accent-purple">
+                <p class="text-lg font-medium text-gray-400">Exactitud</p>
+                <p class="text-4xl font-extrabold text-white mt-1">{{ formatMetric(data.metrics.accuracy) }}</p>
+                <p class="text-sm text-green-400 mt-2"><i class="fas fa-chart-bar mr-1"></i> Rendimiento</p>
+            </div>
+            
+            <div class="bg-card-dark p-6 rounded-xl shadow-xl transition duration-300 hover:scale-[1.03] border-l-4 border-accent-cyan">
+                <p class="text-lg font-medium text-gray-400">Precisión</p>
+                <p class="text-4xl font-extrabold text-white mt-1">{{ formatMetric(data.metrics.precision) }}</p>
+                <p class="text-sm text-green-400 mt-2"><i class="fas fa-chart-bar mr-1"></i> Fiabilidad</p>
+            </div>
+            
+            <div class="bg-card-dark p-6 rounded-xl shadow-xl transition duration-300 hover:scale-[1.03] border-l-4 border-accent-purple">
+                <p class="text-lg font-medium text-gray-400">Recall</p>
+                <p class="text-4xl font-extrabold text-white mt-1">{{ formatMetric(data.metrics.recall) }}</p>
+                <p [ngClass]="{'text-red-400': data.metrics.recall < 0.7, 'text-green-400': data.metrics.recall >= 0.7}" class="text-sm mt-2"><i class="fas fa-chart-line mr-1"></i> {{ data.metrics.recall < 0.7 ? 'Área de Mejora' : 'Buen Cobertura' }}</p>
+            </div>
+            
+            <div class="bg-card-dark p-6 rounded-xl shadow-xl transition duration-300 hover:scale-[1.03] border-l-4 border-accent-cyan">
+                <p class="text-lg font-medium text-gray-400">F1-Score</p>
+                <p class="text-4xl font-extrabold text-white mt-1">{{ formatMetric(data.metrics.f1_score) }}</p>
+                <p class="text-sm text-green-400 mt-2"><i class="fas fa-award mr-1"></i> Métrica Clave</p>
+            </div>
+        </div>
 
-                        <div class="bg-card-dark p-6 rounded-xl shadow-xl flex flex-col justify-between">
-                            <div>
-                                <h3 class="text-xl font-semibold text-white mb-4">Matriz de Confusión</h3>
-                                <ul class="text-sm space-y-2 text-gray-300">
-                                    <li><span class="font-bold text-green-400">Verdaderos Positivos:</span> 890</li>
-                                    <li><span class="font-bold text-red-400">Falsos Positivos:</span> 70</li>
-                                    <li><span class="font-bold text-red-400">Falsos Negativos:</span> 210</li>
-                                    <li><span class="font-bold text-green-400">Verdaderos Negativos:</span> 1500</li>
-                                </ul>
-                            </div>
-                            <button class="mt-6 py-3 px-6 rounded-lg bg-accent-cyan hover:bg-cyan-600 font-medium transition duration-200 shadow-lg shadow-cyan-900/50">
-                                Exportar Reporte Detallado
-                            </button>
-                        </div>
-                    </div>
-                </section>
+    </div>
+
+    <ng-template #noData>
+        <div *ngIf="!isLoading" class="bg-gray-800 p-8 rounded-xl text-center">
+            <i class="fas fa-exclamation-circle text-6xl text-gray-500 mb-4"></i>
+            <p class="text-lg text-white font-semibold">Esperando Datos de Evaluación</p>
+            <p class="text-gray-400 mt-2">Por favor, asegúrate de haber cargado y entrenado el modelo en la sección anterior.</p>
+            <button (click)="loadEvaluationMetrics()" class="mt-4 py-2 px-4 bg-accent-purple rounded-lg hover:bg-purple-800 transition duration-200">
+                Reintentar Carga de Métricas
+            </button>
+        </div>
+    </ng-template>
+</section>

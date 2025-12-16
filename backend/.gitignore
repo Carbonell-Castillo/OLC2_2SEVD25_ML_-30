@@ -1,0 +1,38 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+# Python
+
+# Flask
+instance/
+.webassets-cache
+
+# Archivos temporales
+uploads/*.csv
+saved_models/*.pkl
+
+# Excepciones
+!studentguard_1100_REALISTA.csv
+!studentguard_CON_PROBLEMAS.csv
+
+# IDEs
+.vscode/
+.idea/
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Env
+.env
