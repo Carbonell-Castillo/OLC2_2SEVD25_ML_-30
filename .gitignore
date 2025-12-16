@@ -1,0 +1,12 @@
+# Entorno virtual 
+backend/venv/
+
+# Cachés de Python
+__pycache__/
+backend/__pycache__/
+backend/**/__pycache__/
+*.pyc
+
+# Config de IDE
+.vscode/
+.idea/

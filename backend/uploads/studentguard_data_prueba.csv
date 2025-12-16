@@ -1,0 +1,201 @@
+asistencia_clases,tareas_entregadas,participacion_clase,horas_estudio,promedio_evaluaciones,cursos_reprobados,actividades_extracurriculares,reportes_disciplinarios,riesgo,carnet,first_name,last_name,promedio_actual,gender
+92.0,18,85.0,15.0,88.0,0,"['deportes', 'club_matematicas']",0,no riesgo,88-483-1466,Kearney,Gainsbury,15.9623,Male
+75.0,12,60.0,8.0,65.0,2,['club_lectura'],1,riesgo,15-612-7538,Currey,Chilton,52.6045,Male
+95.0,19,90.0,20.0,92.0,0,"['deportes', 'teatro', 'musica']",0,no riesgo,81-273-4338,Kelcie,Vayne,58.7542,Non-binary
+88.0,17,78.0,12.0,82.0,0,['voluntariado'],0,no riesgo,53-300-8548,Herrick,Romanetti,,Male
+70.0,15,65.0,10.0,72.0,1,[],2,riesgo,35-596-6889,Cherie,Dober,97.6683,Female
+55.0,8,40.0,5.0,50.0,3,[],3,riesgo,95-224-4105,Guillema,Lelliott,46.7091,Female
+98.0,20,95.0,25.0,96.0,0,"['robotica', 'deportes']",0,no riesgo,28-478-2858,Brewer,Tredget,77.6743,Male
+82.0,14,75.0,11.0,68.0,2,['arte'],1,riesgo,95-095-9991,Zacharia,Couldwell,15.9855,Male
+91.0,18,88.0,18.0,89.0,0,"['debate', 'periodico']",0,no riesgo,76-479-9786,Wandie,Jerok,25.8793,Female
+68.0,13,55.0,7.0,62.0,2,[],2,riesgo,23-697-0580,Troy,Bogart,10.3332,Male
+85.0,16,80.0,14.0,78.0,1,['club_ciencias'],0,no riesgo,36-242-5629,Nelly,Hagley,92.7652,Female
+62.0,10,45.0,6.0,58.0,3,[],1,riesgo,10-902-6164,Puff,Gidman,51.4151,Male
+96.0,19,92.0,22.0,94.0,0,"['musica', 'deportes', 'voluntariado']",0,no riesgo,34-328-8823,Marys,Dignon,33.5428,Female
+72.0,11,50.0,8.0,65.0,2,['ajedrez'],2,riesgo,48-234-0685,Melly,Keasy,102.8618,Agender
+89.0,17,85.0,16.0,87.0,1,['teatro'],0,no riesgo,,Matty,Telfer,23.4031,Male
+65.0,12,60.0,9.0,64.0,2,[],1,riesgo,18-070-9116,Catrina,Archanbault,4.0917,Genderqueer
+78.0,14,70.0,10.0,71.0,1,"['club_lectura', 'arte']",0,no riesgo,14-596-2807,Claudius,Lugton,69.8869,Male
+87.0,16,82.0,15.0,84.0,0,['deportes'],0,no riesgo,33-969-8702,Sabine,Gleadhall,81.4272,Female
+35.0,3,15.0,1.0,25.0,5,[],5,riesgo,67-340-8689,Bette,Venediktov,111.0792,Female
+99.0,20,97.0,30.0,99.0,0,"['robotica', 'debate', 'musica', 'deportes']",0,no riesgo,12-447-0285,Gorden,Widdowson,33.3017,Male
+84.0,15,79.0,13.0,80.0,0,['periodico'],0,no riesgo,28-504-6648,Barney,Suttle,52.43,Male
+58.0,9,42.0,4.0,52.0,3,[],2,riesgo,68-669-4875,Xenia,Keel,106.5005,Female
+86.0,16,83.0,14.0,81.0,1,['club_matematicas'],0,no riesgo,41-877-6889,Arturo,Beteriss,,Agender
+81.0,13,72.0,12.0,76.0,2,"['arte', 'teatro']",1,riesgo,,Baillie,Glancey,93.6216,Male
+93.0,19,91.0,21.0,93.0,0,"['deportes', 'voluntariado']",0,no riesgo,,Jilli,Ruggier,14.0545,Female
+63.0,11,53.0,7.0,59.0,2,[],1,riesgo,22-368-9610,Gabriel,Gaule,,Female
+79.0,14,73.0,11.0,74.0,1,['club_ciencias'],0,no riesgo,97-601-9692,Michell,Brosi,8.4097,Female
+90.0,18,86.0,17.0,88.0,0,['musica'],0,no riesgo,88-352-1191,Corine,Fishley,113.1958,Female
+50.0,7,35.0,3.0,45.0,4,[],3,riesgo,84-205-6024,Thorny,Clamo,108.4649,Male
+94.0,19,93.0,23.0,95.0,0,"['robotica', 'deportes', 'debate']",0,no riesgo,11-896-4355,Nancey,Lupton,28.1944,Female
+88.0,17,84.0,16.0,85.0,0,"['periodico', 'arte']",0,no riesgo,51-800-9049,Queenie,Claremont,68.5182,Genderfluid
+69.0,12,61.0,8.0,63.0,2,[],2,riesgo,49-312-5760,Anette,Marnes,87.5979,Female
+83.0,15,77.0,12.0,79.0,1,['club_lectura'],0,no riesgo,96-376-9344,Johnny,Bierling,,Male
+92.0,18,89.0,19.0,90.0,0,"['deportes', 'musica']",0,no riesgo,59-914-8339,Renault,Keppie,15.9108,Male
+54.0,8,38.0,4.0,48.0,3,[],2,riesgo,,Roseanna,Heine,26.5943,Female
+95.0,20,94.0,24.0,96.0,0,"['voluntariado', 'teatro']",0,no riesgo,,Verina,Staite,30.755,Female
+76.0,13,68.0,9.0,70.0,1,['ajedrez'],1,riesgo,23-416-7164,Shellysheldon,Tunbridge,65.2809,Male
+85.0,16,81.0,14.0,82.0,0,"['club_matematicas', 'deportes']",0,no riesgo,69-028-8546,Cecilia,De Simoni,55.3784,Bigender
+64.0,11,56.0,7.0,60.0,2,[],1,riesgo,92-565-1827,Kati,Mulvy,54.3278,Female
+97.0,20,96.0,26.0,97.0,0,"['robotica', 'debate']",0,no riesgo,,Corrinne,Alenichev,89.0115,Female
+80.0,14,74.0,13.0,77.0,2,['arte'],1,riesgo,24-780-5963,Abbe,Juszczak,81.9822,Female
+82.0,15,78.0,12.0,83.0,0,['periodico'],0,no riesgo,86-254-6646,Philip,Baudic,91.0768,Male
+67.0,12,59.0,8.0,61.0,2,[],2,riesgo,01-202-4610,Tabby,Radbourn,92.1764,Male
+84.0,16,80.0,15.0,81.0,1,"['club_ciencias', 'musica']",0,no riesgo,94-941-8996,Johnny,Issakov,110.6342,Male
+98.0,20,98.0,28.0,98.0,0,"['deportes', 'voluntariado', 'teatro']",0,no riesgo,27-098-9451,Jacqui,Case,61.1901,Female
+60.0,10,48.0,5.0,55.0,3,[],2,riesgo,95-349-6736,Felita,Scampion,70.1002,Female
+89.0,17,87.0,18.0,86.0,0,['debate'],0,no riesgo,62-864-7536,Eli,Clemmett,11.4438,Male
+71.0,12,63.0,10.0,66.0,2,"['arte', 'club_lectura']",1,riesgo,89-960-0870,Irwinn,Kluss,110.6884,Male
+77.0,14,71.0,11.0,73.0,1,['deportes'],0,no riesgo,59-552-5736,Eli,Week,103.8559,Male
+99.0,20,99.0,32.0,99.0,0,"['robotica', 'musica', 'debate']",0,no riesgo,32-056-1839,Ophelia,Magee,10.0901,Female
+91.0,18,90.0,20.0,91.0,0,"['periodico', 'arte']",0,no riesgo,70-432-8522,Renado,Hallas,74.5628,Male
+66.0,11,57.0,7.0,62.0,2,[],1,riesgo,59-368-9958,Risa,O'Feeney,23.6134,Female
+81.0,15,76.0,13.0,75.0,1,['club_matematicas'],0,no riesgo,98-496-1907,Jozef,Drinkhall,72.0129,Male
+94.0,19,92.0,22.0,94.0,0,"['deportes', 'voluntariado']",0,no riesgo,,Andie,Konerding,20.7169,Female
+56.0,9,44.0,4.0,51.0,3,[],2,riesgo,54-313-7149,Dav,Bowdery,90.1745,Male
+86.0,16,83.0,15.0,84.0,0,"['teatro', 'musica']",0,no riesgo,21-725-5772,Nefen,Harder,59.2744,Male
+73.0,13,65.0,9.0,67.0,1,['ajedrez'],1,riesgo,87-920-5481,Augusto,Wellesley,28.9235,Male
+96.0,20,95.0,25.0,96.0,0,"['robotica', 'deportes']",0,no riesgo,92-239-3148,Inge,Pietasch,70.7337,Non-binary
+79.0,14,69.0,12.0,72.0,2,['club_lectura'],2,riesgo,20-684-2086,Jakob,Geke,98.8423,Polygender
+88.0,17,85.0,17.0,87.0,0,['periodico'],0,no riesgo,38-862-5555,Vernor,Ould,54.3096,Male
+70.0,12,62.0,8.0,64.0,2,[],1,riesgo,70-258-6464,Patton,Bolland,89.6469,Male
+83.0,16,79.0,14.0,80.0,1,"['club_ciencias', 'arte']",0,no riesgo,27-797-6291,Hoebart,Forton,57.9148,Male
+95.0,19,93.0,23.0,95.0,0,"['deportes', 'musica', 'voluntariado']",0,no riesgo,06-175-1503,Harlin,Jancey,84.9643,Male
+52.0,8,40.0,3.0,47.0,3,[],3,riesgo,33-264-4769,Davey,Krammer,71.7097,Male
+90.0,18,88.0,19.0,89.0,0,"['debate', 'teatro']",0,no riesgo,,Romain,Chinnock,12.3202,Male
+75.0,13,66.0,11.0,69.0,2,['musica'],1,riesgo,94-516-6209,Nonna,Priestland,72.1264,Female
+78.0,14,72.0,12.0,74.0,1,['deportes'],0,no riesgo,26-390-8068,Cullin,Tolworthy,,Male
+97.0,20,97.0,27.0,97.0,0,"['robotica', 'debate', 'musica']",0,no riesgo,19-528-7535,Jerad,Pendrich,,Male
+84.0,15,82.0,16.0,83.0,0,"['periodico', 'club_lectura']",0,no riesgo,83-132-3719,Brucie,Furzey,116.904,Male
+65.0,11,58.0,7.0,60.0,2,[],2,riesgo,79-090-5834,Paten,Tomowicz,8.5272,Male
+80.0,15,75.0,13.0,76.0,1,['club_matematicas'],0,no riesgo,82-247-4598,Reynold,Altoft,1.0775,Male
+93.0,19,91.0,21.0,93.0,0,"['deportes', 'voluntariado']",0,no riesgo,56-996-0898,Giana,Breyt,108.7557,Female
+55.0,9,46.0,5.0,53.0,3,[],2,riesgo,47-436-0444,Deidre,Menilove,109.2959,Female
+87.0,16,84.0,15.0,85.0,0,"['teatro', 'arte']",0,no riesgo,09-194-2779,Cheri,Weblin,103.4513,Female
+74.0,14,67.0,10.0,68.0,1,['ajedrez'],1,riesgo,31-905-7242,Ellary,Boutton,107.609,Male
+96.0,20,94.0,24.0,96.0,0,"['robotica', 'deportes', 'debate']",0,no riesgo,66-191-8953,Stillmann,Whissell,,Male
+82.0,15,77.0,14.0,78.0,2,['club_ciencias'],2,riesgo,96-629-7215,Kerrill,Petrushanko,64.366,Bigender
+92.0,18,89.0,18.0,90.0,0,['periodico'],0,no riesgo,65-208-6292,Michael,Levey,,Male
+68.0,12,61.0,8.0,63.0,2,[],1,riesgo,44-858-9971,Randie,Gosselin,91.6608,Female
+85.0,16,81.0,15.0,82.0,1,"['musica', 'arte']",0,no riesgo,25-441-4495,Marjie,Petru,45.3398,Female
+98.0,20,96.0,26.0,98.0,0,"['deportes', 'voluntariado', 'teatro']",0,no riesgo,,Lyn,Soigne,10.7394,Female
+49.0,7,37.0,2.0,44.0,4,[],4,riesgo,32-371-0041,Bastian,Flowerden,,Male
+89.0,17,86.0,17.0,88.0,0,['debate'],0,no riesgo,07-822-3552,Crin,Purbrick,110.0991,Female
+76.0,13,70.0,11.0,71.0,2,['club_lectura'],1,riesgo,,Tris,Fudge,71.7047,Male
+79.0,14,73.0,12.0,75.0,1,['deportes'],0,no riesgo,79-455-1295,Billie,Geockle,,Male
+99.0,20,98.0,29.0,99.0,0,"['robotica', 'musica', 'debate']",0,no riesgo,91-778-9424,Gabi,Alishoner,61.8387,Female
+83.0,15,80.0,14.0,81.0,0,"['periodico', 'arte']",0,no riesgo,89-992-8314,Eddie,Charters,100.5338,Male
+67.0,11,59.0,7.0,61.0,2,[],2,riesgo,26-740-6470,Farlee,O'Hannigan,47.5039,Male
+81.0,15,76.0,13.0,77.0,1,"['club_matematicas', 'musica']",0,no riesgo,02-710-7877,Gawain,Ewbach,95.8318,Male
+94.0,19,92.0,22.0,94.0,0,"['deportes', 'voluntariado']",0,no riesgo,73-404-1851,Claudetta,Tenwick,3.4801,Female
+57.0,10,50.0,6.0,56.0,3,[],2,riesgo,56-231-2851,Andree,MacPadene,73.6745,Genderfluid
+86.0,16,83.0,16.0,84.0,0,['teatro'],0,no riesgo,67-592-3874,Janella,Bardey,0.0345,Female
+75.0,14,68.0,10.0,69.0,1,"['ajedrez', 'club_ciencias']",1,riesgo,03-263-3076,Teddi,Malone,43.5994,Female
+95.0,20,95.0,25.0,95.0,0,"['robotica', 'deportes']",0,no riesgo,41-435-7003,Debee,Lindop,30.6655,Female
+78.0,14,71.0,13.0,73.0,2,['arte'],2,riesgo,,Jorge,Buttner,41.142,Male
+90.0,18,87.0,19.0,89.0,0,"['periodico', 'club_lectura']",0,no riesgo,75-108-7259,Mariele,Churm,61.6528,Female
+69.0,12,64.0,9.0,65.0,2,[],1,riesgo,60-659-0839,Jennie,Cokely,64.3765,Genderfluid
+84.0,16,82.0,15.0,83.0,1,['musica'],0,no riesgo,79-606-9193,Amby,Albutt,59.9855,Male
+96.0,20,97.0,23.0,96.0,0,"['deportes', 'voluntariado', 'teatro']",0,no riesgo,27-453-4931,Cymbre,O' Mullan,6.5919,Female
+53.0,8,42.0,4.0,49.0,3,[],3,riesgo,40-320-0984,Vladimir,Wartnaby,,Male
+88.0,17,85.0,18.0,86.0,0,"['debate', 'arte']",0,no riesgo,65-581-2503,Genevieve,Haulkham,40.3135,Female
+77.0,13,72.0,12.0,74.0,2,['club_matematicas'],1,riesgo,99-099-3303,Marjy,Cocksedge,78.5842,Female
+80.0,14,75.0,11.0,76.0,1,['deportes'],0,no riesgo,04-071-4594,Dorolice,Rosettini,108.3378,Female
+97.0,20,99.0,28.0,97.0,0,"['robotica', 'debate', 'musica']",0,no riesgo,76-663-1571,Drusilla,Moule,,Female
+91.0,18,90.0,21.0,91.0,0,['periodico'],0,no riesgo,02-132-0371,Abba,Casotti,102.3171,Genderqueer
+66.0,11,60.0,8.0,62.0,2,[],2,riesgo,59-033-1416,Gavin,Cosgrove,27.7276,Male
+82.0,15,78.0,14.0,79.0,1,"['club_ciencias', 'arte']",0,no riesgo,57-362-2823,Mickie,Tidcombe,13.1376,Male
+93.0,19,93.0,24.0,94.0,0,"['deportes', 'voluntariado']",0,no riesgo,42-380-9011,Linea,Scandred,51.6787,Female
+59.0,10,52.0,7.0,57.0,3,[],2,riesgo,78-790-7014,Quincy,Severs,44.2903,Male
+85.0,16,81.0,15.0,82.0,0,"['teatro', 'musica']",0,no riesgo,09-575-3801,Vere,Clemes,,Genderfluid
+76.0,13,70.0,10.0,72.0,1,['ajedrez'],1,riesgo,22-066-7589,Elsey,Dance,113.4858,Female
+94.0,20,96.0,26.0,95.0,0,"['robotica', 'deportes', 'debate']",0,no riesgo,,Garrard,Brightwell,93.2234,Male
+81.0,14,74.0,13.0,77.0,2,['club_lectura'],2,riesgo,76-972-4027,Vivi,Mainwaring,84.0184,Female
+89.0,17,86.0,17.0,87.0,0,"['periodico', 'arte']",0,no riesgo,71-401-6289,Lindsay,Helwig,,Female
+64.0,11,56.0,7.0,58.0,2,[],1,riesgo,48-690-0007,Darice,Pinchback,46.1831,Female
+83.0,16,79.0,14.0,80.0,1,['musica'],0,no riesgo,,Alyssa,Bamlett,,Female
+98.0,20,98.0,30.0,99.0,0,"['deportes', 'voluntariado', 'teatro', 'debate']",0,no riesgo,14-119-6316,Del,Camous,,Agender
+48.0,6,33.0,2.0,42.0,4,[],4,riesgo,75-039-3705,Layla,Gadman,7.1856,Female
+87.0,16,84.0,16.0,85.0,0,['club_matematicas'],0,no riesgo,67-294-1393,Haskell,Rosenfield,41.4831,Male
+74.0,13,67.0,11.0,70.0,2,"['arte', 'teatro']",1,riesgo,21-339-8918,Felike,Stent,54.6667,Male
+79.0,14,73.0,12.0,75.0,1,"['deportes', 'musica']",0,no riesgo,,Shauna,Hember,34.1228,Genderfluid
+95.0,19,94.0,22.0,95.0,0,"['robotica', 'debate']",0,no riesgo,,Alix,Toon,88.519,Male
+92.0,18,91.0,20.0,92.0,0,"['periodico', 'club_lectura']",0,no riesgo,43-887-1505,Keary,Gricks,47.126,Male
+70.0,12,65.0,9.0,66.0,2,[],2,riesgo,58-275-6693,Lane,Pittel,26.9619,Male
+81.0,15,77.0,13.0,78.0,1,['club_ciencias'],0,no riesgo,26-283-5419,Cart,Ivanaev,,Non-binary
+96.0,20,97.0,25.0,96.0,0,"['deportes', 'voluntariado']",0,no riesgo,24-665-7891,Adolphe,Oxbrough,7.3509,Male
+54.0,9,47.0,5.0,54.0,3,[],3,riesgo,88-639-1257,Ashlin,Grent,119.4982,Male
+88.0,17,87.0,18.0,88.0,0,['teatro'],0,no riesgo,94-311-8506,Thor,Custance,33.5404,Male
+77.0,13,71.0,11.0,73.0,1,"['ajedrez', 'arte']",1,riesgo,,Zach,Canny,110.3434,Male
+97.0,20,99.0,27.0,97.0,0,"['robotica', 'deportes', 'musica']",0,no riesgo,90-661-5229,Redford,Trimme,95.3745,Male
+80.0,15,76.0,14.0,79.0,2,['club_matematicas'],2,riesgo,85-205-3446,Vickie,Felgat,51.0875,Female
+84.0,16,82.0,15.0,83.0,0,['periodico'],0,no riesgo,44-011-9980,Malissa,Quail,7.3938,Female
+68.0,11,62.0,8.0,64.0,2,[],1,riesgo,52-152-7122,Stevena,Moulding,112.5652,Female
+85.0,16,83.0,16.0,84.0,1,"['musica', 'arte']",0,no riesgo,96-848-3999,Phelia,Suttling,25.8345,Female
+99.0,20,100.0,31.0,98.0,0,"['deportes', 'voluntariado', 'teatro', 'debate']",0,no riesgo,32-472-8772,Beatrice,Elwill,78.5616,Female
+51.0,8,41.0,4.0,50.0,3,[],3,riesgo,92-897-6532,Giusto,Wontner,101.4795,Male
+91.0,18,89.0,19.0,90.0,0,['club_lectura'],0,no riesgo,,Maggee,Woodrooffe,20.4334,Female
+73.0,12,66.0,10.0,68.0,2,['arte'],1,riesgo,,Vi,O'Harney,116.5172,Female
+78.0,13,72.0,11.0,74.0,1,['deportes'],0,no riesgo,80-798-5619,Ibrahim,Baumaier,79.2094,Male
+96.0,20,98.0,26.0,96.0,0,"['robotica', 'debate']",0,no riesgo,62-092-5120,Darrel,Carncross,2.88,Male
+86.0,17,85.0,17.0,86.0,0,"['periodico', 'musica']",0,no riesgo,59-719-9324,Merci,Friskey,39.2908,Female
+65.0,10,58.0,7.0,59.0,2,[],2,riesgo,50-845-8973,Dore,Silverlock,99.3428,Male
+82.0,15,78.0,14.0,80.0,1,"['club_ciencias', 'arte']",0,no riesgo,47-248-8283,Crista,Sansbury,,Female
+94.0,19,95.0,23.0,95.0,0,"['deportes', 'voluntariado']",0,no riesgo,34-505-7875,Klaus,Pearman,87.4751,Male
+58.0,9,49.0,5.0,55.0,3,[],2,riesgo,23-941-2912,Loretta,Maffioletti,107.449,Female
+87.0,16,83.0,16.0,85.0,0,"['teatro', 'musica']",0,no riesgo,50-842-1948,Clerkclaude,Kinnard,43.4087,Male
+75.0,14,69.0,10.0,71.0,1,['ajedrez'],1,riesgo,00-472-3364,Pavel,Cantero,,Male
+97.0,20,97.0,28.0,97.0,0,"['robotica', 'deportes']",0,no riesgo,13-320-5776,Patrice,Blencoe,,Female
+83.0,15,80.0,15.0,82.0,2,"['club_lectura', 'arte']",2,riesgo,,Basil,Battersby,109.7474,Male
+93.0,19,92.0,21.0,93.0,0,['periodico'],0,no riesgo,60-183-5989,Fielding,Alabaster,41.4263,Male
+67.0,11,61.0,8.0,63.0,2,[],1,riesgo,26-223-8179,Ramsay,Le Quesne,44.7014,Male
+84.0,16,81.0,15.0,82.0,1,['musica'],0,no riesgo,14-640-4830,Godwin,Muddle,92.9296,Male
+98.0,20,99.0,29.0,98.0,0,"['deportes', 'voluntariado', 'teatro']",0,no riesgo,02-071-1167,Romy,Rayner,42.2128,Female
+47.0,6,32.0,1.0,41.0,4,[],5,riesgo,19-299-9657,Berky,Gounin,46.2301,Male
+89.0,17,86.0,18.0,87.0,0,"['debate', 'club_matematicas']",0,no riesgo,20-208-8868,Obadiah,Libbie,78.7087,Male
+72.0,12,65.0,9.0,67.0,2,"['arte', 'teatro']",1,riesgo,,Aliza,Wylam,80.7412,Female
+80.0,14,74.0,12.0,76.0,1,"['deportes', 'musica']",0,no riesgo,,Hewie,Faithfull,101.4635,Bigender
+95.0,19,96.0,24.0,95.0,0,"['robotica', 'debate', 'musica']",0,no riesgo,85-728-3368,Eddie,Latimer,10.7879,Agender
+90.0,18,88.0,20.0,89.0,0,"['periodico', 'arte']",0,no riesgo,24-229-5154,Umeko,Skillanders,62.7711,Female
+69.0,12,63.0,9.0,65.0,2,[],2,riesgo,66-641-5127,Reginauld,Hartil,34.075,Male
+83.0,16,80.0,14.0,81.0,1,['club_ciencias'],0,no riesgo,25-604-6749,Trisha,Esmead,24.5155,Non-binary
+92.0,19,93.0,22.0,94.0,0,"['deportes', 'voluntariado']",0,no riesgo,49-752-0302,Garreth,Prewett,17.9919,Male
+56.0,9,48.0,6.0,53.0,3,[],3,riesgo,33-725-9676,Eryn,Doone,56.0509,Female
+85.0,16,82.0,15.0,84.0,0,['teatro'],0,no riesgo,02-281-2256,Alic,Pyper,42.2437,Male
+76.0,13,70.0,11.0,72.0,1,"['ajedrez', 'arte']",1,riesgo,96-381-9276,Hendrik,Santino,25.8931,Male
+96.0,20,98.0,25.0,96.0,0,"['robotica', 'deportes', 'debate']",0,no riesgo,17-698-0661,Pierre,Braunds,102.8527,Male
+81.0,15,79.0,14.0,80.0,2,['club_matematicas'],2,riesgo,00-789-3172,Derril,Baroche,,Male
+88.0,17,87.0,18.0,88.0,0,"['periodico', 'musica']",0,no riesgo,,Jillayne,Mabe,45.6765,Female
+66.0,10,59.0,7.0,60.0,2,[],1,riesgo,45-091-6047,Nathanael,Bolan,,Male
+80.0,14,74.0,12.0,76.0,1,"['deportes', 'musica']",0,no riesgo,66-776-6683,Grover,Castellani,26.9363,Agender
+95.0,19,96.0,24.0,95.0,0,"['robotica', 'debate', 'musica']",0,no riesgo,04-161-2802,Izzy,Guerrier,88.5171,Male
+90.0,18,88.0,20.0,89.0,0,"['periodico', 'arte']",0,no riesgo,32-492-8936,Gill,Wrightson,94.874,Male
+69.0,12,63.0,9.0,65.0,2,[],2,riesgo,10-695-3615,Olin,Cookes,72.9386,Male
+83.0,16,80.0,14.0,81.0,1,['club_ciencias'],0,no riesgo,83-649-4544,Jenni,Scamerdine,12.3074,Female
+92.0,19,93.0,22.0,94.0,0,"['deportes', 'voluntariado']",0,no riesgo,10-511-3893,Hilarius,Farey,47.7942,Male
+56.0,9,48.0,6.0,53.0,3,[],3,riesgo,14-117-4291,Reuven,Mosley,104.7968,Male
+85.0,16,82.0,15.0,84.0,0,['teatro'],0,no riesgo,59-624-1853,Beatrix,Dancy,38.347,Female
+76.0,13,70.0,11.0,72.0,1,"['ajedrez', 'arte']",1,riesgo,83-244-9805,Quintilla,Paddeley,48.5872,Female
+83.0,16,79.0,14.0,80.0,1,['musica'],0,no riesgo,,Harwilll,Flanner,38.4541,Male
+98.0,20,98.0,30.0,99.0,0,"['deportes', 'voluntariado', 'teatro', 'debate']",0,no riesgo,98-763-6085,Floria,Hempshall,30.1419,Female
+48.0,6,33.0,2.0,42.0,4,[],4,riesgo,55-740-6564,Ashil,Brightie,,Female
+87.0,16,84.0,16.0,85.0,0,['club_matematicas'],0,no riesgo,24-364-2512,Horatius,Ackrill,,Male
+74.0,13,67.0,11.0,70.0,2,"['arte', 'teatro']",1,riesgo,,Sadye,Dupoy,,Female
+79.0,14,73.0,12.0,75.0,1,"['deportes', 'musica']",0,no riesgo,86-606-4519,Abraham,Kibbee,,Male
+95.0,19,94.0,22.0,95.0,0,"['robotica', 'debate']",0,no riesgo,02-541-6843,Bruis,Cristoforo,80.7307,Male
+92.0,18,91.0,20.0,92.0,0,"['periodico', 'club_lectura']",0,no riesgo,68-658-8414,Giulietta,Retter,60.8841,Female
+92.0,18,85.0,15.0,88.0,0,"['deportes', 'club_matematicas']",0,no riesgo,02-000-6944,Tracy,Daffern,34.4178,Female
+75.0,12,60.0,8.0,65.0,2,['club_lectura'],1,riesgo,71-071-4312,Nolana,Fowley,63.6507,Female
+95.0,19,90.0,20.0,92.0,0,"['deportes', 'teatro', 'musica']",0,no riesgo,62-377-6220,Eziechiele,Biswell,43.1324,Male
+88.0,17,78.0,12.0,82.0,0,['voluntariado'],0,no riesgo,,Derwin,Van Eeden,1.2295,Male
+70.0,15,65.0,10.0,72.0,1,[],2,riesgo,26-128-0543,Ernesto,Britcher,46.7307,Non-binary
+55.0,8,40.0,5.0,50.0,3,[],3,riesgo,47-217-0909,Michele,Steers,101.7496,Male
+98.0,20,95.0,25.0,96.0,0,"['robotica', 'deportes']",0,no riesgo,62-711-8627,Derron,Baistow,2.6106,Male
+82.0,14,75.0,11.0,68.0,2,['arte'],1,riesgo,82-308-1770,Myrta,Frood,63.3559,Female
+91.0,18,88.0,18.0,89.0,0,"['debate', 'periodico']",0,no riesgo,36-990-9181,Brenn,Bosket,32.7299,Female
+68.0,13,55.0,7.0,62.0,2,[],2,riesgo,44-449-7934,Templeton,Kerfoot,6.0144,Male
+85.0,16,80.0,14.0,78.0,1,['club_ciencias'],0,no riesgo,54-143-9185,Tobias,Giacomi,73.0307,Male
+62.0,10,45.0,6.0,58.0,3,[],1,riesgo,38-987-8662,Abba,Lidgard,50.8913,Male
+96.0,19,92.0,22.0,94.0,0,"['musica', 'deportes', 'voluntariado']",0,no riesgo,00-524-6870,Skelly,Gudd,54.5969,Male
+72.0,11,50.0,8.0,65.0,2,['ajedrez'],2,riesgo,47-784-9801,Anestassia,Durrans,26.8715,Female
