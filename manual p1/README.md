@@ -6,6 +6,13 @@
 
 StudentGuard es un sistema de Machine Learning diseñado para predecir el riesgo académico de estudiantes universitarios. Utilizando Regresión Logística, el sistema analiza 9 variables académicas y de comportamiento para clasificar estudiantes en dos categorías: **"riesgo"** o **"no riesgo"**.
 
+**Desarrollado por:** 
+202100039 Fabiola
+220203069 Bruce
+**Curso:** Compiladores 2
+**Universidad:** Universidad de San Carlos de Guatemala (USAC)
+**Auxiliar:** Katherine Gomez
+
 -----
 
 ## Objetivo
@@ -25,117 +32,152 @@ Proporcionar una herramienta automatizada que permita a instituciones educativas
 ```
 backend/
 ├── src/
-│   ├── app/
-│   │   └── app.py            # Servidor Flask con endpoints
-│   ├── data/
-│   │   ├── data_loader.py    # Carga y validación de CSV
-│   │   └── data_cleaner.py   # Limpieza de datos
-│   ├── ml/
-│   │   ├── training.py       # Entrenamiento del modelo
-│   │   └── prediction.py     # Predicciones
-│   └── config.py             # Configuración de variables
-├── uploads/                   # Archivos CSV temporales
-├── saved_models/              # Modelos entrenados (.pkl)
-└── requirements.txt          # Dependencias Python
+│   ├── app/
+│   │   └── app.py            # Servidor Flask con endpoints
+│   ├── data/
+│   │   ├── data_loader.py    # Carga y validación de CSV
+│   │   └── data_cleaner.py   # Limpieza de datos
+│   ├── ml/
+│   │   ├── training.py       # Entrenamiento del modelo
+│   │   └── prediction.py     # Predicciones
+│   └── config.py             # Configuración de variables
+├── uploads/                   # Archivos CSV temporales
+├── saved_models/              # Modelos entrenados (.pkl)
+└── requirements.txt          # Dependencias Python
 ```
 
 ### **Frontend (Angular)**
 
 El frontend fue desarrollado usando **Angular** y se divide en las siguientes secciones, permitiendo al usuario interactuar con las funcionalidades del backend:
 
-
 ```
 OLC2_2SEVD25_ML_-33
 ├─ Frontend
-│  ├─ .angular
-│  │  └─ cache
-│  │     └─ 21.0.3
-│  │        └─ Frontend
-│  ├─ .editorconfig
-│  ├─ angular.json
-│  ├─ package-lock.json
-│  ├─ package.json
-│  ├─ public
-│  │  └─ favicon.ico
-│  ├─ README.md
-│  ├─ src
-│  │  ├─ app
-│  │  │  ├─ app.config.server.ts
-│  │  │  ├─ app.config.ts
-│  │  │  ├─ app.css
-│  │  │  ├─ app.html
-│  │  │  ├─ app.routes.server.ts
-│  │  │  ├─ app.routes.ts
-│  │  │  ├─ app.spec.ts
-│  │  │  ├─ app.ts
-│  │  │  ├─ components
-│  │  │  │  ├─ dashboard-layout.css
-│  │  │  │  ├─ dashboard-layout.html
-│  │  │  │  ├─ dashboard-layout.spec.ts
-│  │  │  │  ├─ dashboard-layout.ts
-│  │  │  │  ├─ header
-│  │  │  │  │  ├─ header.css
-│  │  │  │  │  ├─ header.html
-│  │  │  │  │  ├─ header.spec.ts
-│  │  │  │  │  └─ header.ts
-│  │  │  │  └─ sidebar
-│  │  │  │     ├─ sidebar.css
-│  │  │  │     ├─ sidebar.html
-│  │  │  │     ├─ sidebar.spec.ts
-│  │  │  │     └─ sidebar.ts
-│  │  │  ├─ pages
-│  │  │  │  ├─ ajuste-parametros
-│  │  │  │  │  ├─ ajuste-parametros.css
-│  │  │  │  │  ├─ ajuste-parametros.html
-│  │  │  │  │  ├─ ajuste-parametros.spec.ts
-│  │  │  │  │  └─ ajuste-parametros.ts
-│  │  │  │  ├─ carga-masiva
-│  │  │  │  │  ├─ carga-masiva.css
-│  │  │  │  │  ├─ carga-masiva.html
-│  │  │  │  │  ├─ carga-masiva.spec.ts
-│  │  │  │  │  └─ carga-masiva.ts
-│  │  │  │  ├─ evaluacion-modelos
-│  │  │  │  │  ├─ evaluacion-modelos.css
-│  │  │  │  │  ├─ evaluacion-modelos.html
-│  │  │  │  │  ├─ evaluacion-modelos.spec.ts
-│  │  │  │  │  └─ evaluacion-modelos.ts
-│  │  │  │  └─ prediccion-riesgo
-│  │  │  │     ├─ prediccion-riesgo.css
-│  │  │  │     ├─ prediccion-riesgo.html
-│  │  │  │     ├─ prediccion-riesgo.spec.ts
-│  │  │  │     └─ prediccion-riesgo.ts
-│  │  │  └─ services
-│  │  │     └─ data.service.ts
-│  │  ├─ index.html
-│  │  ├─ main.server.ts
-│  │  ├─ main.ts
-│  │  ├─ server.ts
-│  │  └─ styles.css
-│  ├─ tsconfig.app.json
-│  ├─ tsconfig.json
-│  └─ tsconfig.spec.json
-
-
+│  ├─ .angular
+│  │  └─ cache
+│  │     └─ 21.0.3
+│  │        └─ Frontend
+│  ├─ .editorconfig
+│  ├─ angular.json
+│  ├─ package-lock.json
+│  ├─ package.json
+│  ├─ public
+│  │  └─ favicon.ico
+│  ├─ README.md
+│  ├─ src
+│  │  ├─ app
+│  │  │  ├─ app.config.server.ts
+│  │  │  ├─ app.config.ts
+│  │  │  ├─ app.css
+│  │  │  ├─ app.html
+│  │  │  ├─ app.routes.server.ts
+│  │  │  ├─ app.routes.ts
+│  │  │  ├─ app.spec.ts
+│  │  │  ├─ app.ts
+│  │  │  ├─ components
+│  │  │  │  ├─ dashboard-layout.css
+│  │  │  │  ├─ dashboard-layout.html
+│  │  │  │  ├─ dashboard-layout.spec.ts
+│  │  │  │  ├─ dashboard-layout.ts
+│  │  │  │  ├─ header
+│  │  │  │  │  ├─ header.css
+│  │  │  │  │  ├─ header.html
+│  │  │  │  │  ├─ header.spec.ts
+│  │  │  │  │  └─ header.ts
+│  │  │  │  └─ sidebar
+│  │  │  │     ├─ sidebar.css
+│  │  │  │     ├─ sidebar.html
+│  │  │  │     ├─ sidebar.spec.ts
+│  │  │  │     └─ sidebar.ts
+│  │  │  ├─ pages
+│  │  │  │  ├─ ajuste-parametros
+│  │  │  │  │  ├─ ajuste-parametros.css
+│  │  │  │  │  ├─ ajuste-parametros.html
+│  │  │  │  │  ├─ ajuste-parametros.spec.ts
+│  │  │  │  │  └─ ajuste-parametros.ts
+│  │  │  │  ├─ carga-masiva
+│  │  │  │  │  ├─ carga-masiva.css
+│  │  │  │  │  ├─ carga-masiva.html
+│  │  │  │  │  ├─ carga-masiva.spec.ts
+│  │  │  │  │  └─ carga-masiva.ts
+│  │  │  │  ├─ evaluacion-modelos
+│  │  │  │  │  ├─ evaluacion-modelos.css
+│  │  │  │  │  ├─ evaluacion-modelos.html
+│  │  │  │  │  ├─ evaluacion-modelos.spec.ts
+│  │  │  │  │  └─ evaluacion-modelos.ts
+│  │  │  │  └─ prediccion-riesgo
+│  │  │  │     ├─ prediccion-riesgo.css
+│  │  │  │     ├─ prediccion-riesgo.html
+│  │  │  │     ├─ prediccion-riesgo.spec.ts
+│  │  │  │     └─ prediccion-riesgo.ts
+│  │  │  └─ services
+│  │  │     └─ data.service.ts
+│  │  ├─ index.html
+│  │  ├─ main.server.ts
+│  │  ├─ main.ts
+│  │  ├─ server.ts
+│  │  └─ styles.css
+│  ├─ tsconfig.app.json
+│  ├─ tsconfig.json
+│  └─ tsconfig.spec.json
 ```
 
   * **Carga Masiva**
-  Se realiza la carga de datos de manera local
-  ![alt text](image.png)
+    Se realiza la carga de datos de manera local
+    ![alt text](image.png)
   * **Ajuste de Parámetros**
-  Se ajustan los hiperparametros para el calculo de la prediccion
-  ![alt text](image-1.png)
+    Se ajustan los hiperparámetros para el cálculo de la predicción
+![alt text](image-1.png)
   * **Evaluación de Modelos**
-  Se evalua el modelo respectivamente
-  ![alt text](image-2.png)
+    Se evalúa el modelo respectivamente
+    ![alt text](image-2.png)
   * **Predicción**
-  Raliza la prediccion dependiendo de los datos de entrada
-![alt text](image-3.png)
+    Realiza la predicción dependiendo de los datos de entrada
+    ![alt text](image-3.png)
 ### **Modelo de Machine Learning**
 
   * **Algoritmo:** Regresión Logística (Logistic Regression)
   * **Biblioteca:** scikit-learn
   * **Features:** 9 variables numéricas
   * **Target:** Variable binaria (0 = no riesgo, 1 = riesgo)
+
+-----
+
+## Flujo Operacional
+
+El sistema sigue un flujo lineal y controlado que asegura la calidad y el entrenamiento adecuado del modelo antes de generar predicciones.
+
+1.  **Carga Masiva (Upload):** El usuario sube el archivo CSV de estudiantes (`/api/upload`).
+2.  **Limpieza de Datos (Clean):** Se aplica el proceso de preprocesamiento (eliminación de duplicados, manejo de nulos y ajuste de rangos) (`/api/clean`).
+3.  **Entrenamiento (Train):** Se entrena el modelo de Regresión Logística, ya sea con parámetros por defecto o personalizados (`/api/train` o `/api/train_with_params`).
+4.  **Evaluación (Evaluate):** Se muestran las métricas de rendimiento (Accuracy, F1-Score) para validar la calidad del modelo.
+5.  **Predicción (Predict):** Una vez que el modelo está entrenado y validado, se utiliza para predecir el riesgo de estudiantes nuevos o individuales (`/api/predict`).
+
+![alt text](diagrama.png)
+-----
+
+## Justificación del Modelo y Parámetros
+
+### Modelo Seleccionado: Regresión Logística
+
+La Regresión Logística (*Logistic Regression*) se seleccionó por las siguientes razones clave:
+
+1.  **Problema de Clasificación Binaria:** El objetivo del sistema es clasificar a los estudiantes en solo dos categorías mutuamente excluyentes: **Riesgo (1)** o **No Riesgo (0)**. La Regresión Logística es el algoritmo lineal fundamental para este tipo de problemas de clasificación binaria.
+2.  **Interpretabilidad:** A diferencia de modelos más complejos (como Redes Neuronales o *Random Forest*), la Regresión Logística es altamente **interpretable**. Esto significa que podemos entender la influencia de cada variable predictora (ej. `cursos_reprobados`, `asistencia_clases`) en la probabilidad de riesgo, lo cual es vital para el personal educativo que necesita tomar decisiones informadas.
+3.  **Eficiencia Computacional:** Es un modelo rápido de entrenar y predecir, lo que lo hace ideal para un sistema que requiere procesar rápidamente grandes volúmenes de datos cargados masivamente.
+
+$$P(Y=1 | X) = \frac{1}{1 + e^{-(\beta_0 + \beta_1 x_1 + \dots + \beta_n x_n)}}$$
+
+### Justificación de Hiperparámetros
+
+Los hiperparámetros por defecto se ajustaron para optimizar la convergencia y prevenir el *overfitting* de manera eficiente:
+
+| Hiperparámetro | Valor | Justificación |
+| :--- | :--- | :--- |
+| **`max_iter`** | `1000` | Aumentado de su valor por defecto (`100` en scikit-learn). Un número mayor de iteraciones asegura que el algoritmo de optimización (`lbfgs`) tenga suficiente tiempo para **converger** y encontrar la mejor solución para los coeficientes, especialmente con *datasets* grandes. |
+| **`C`** | `0.5` | Es el inverso del parámetro de regularización ($\frac{1}{\lambda}$). Un valor de `0.5` (que implica una regularización moderada) ayuda a **prevenir el *overfitting***, penalizando coeficientes grandes. Esto asegura que el modelo generalice bien a nuevos estudiantes en lugar de memorizar el *dataset* de entrenamiento. |
+| **`solver`** | `lbfgs` | Es el algoritmo de optimización predeterminado y recomendado por `scikit-learn` para la mayoría de los casos de uso. Es eficiente y funciona bien con conjuntos de datos medianos como el usado en este proyecto. |
+| **`random_state`** | `42` | Se utiliza para **fijar la semilla aleatoria**. Esto es crucial para la **reproducibilidad**; garantiza que la división de datos y el proceso de entrenamiento produzcan exactamente los mismos resultados en ejecuciones posteriores. |
 
 -----
 
@@ -252,7 +294,31 @@ En el contexto educativo, los valores extremos **SON VÁLIDOS Y NECESARIOS**:
 -----
 
 ## Modelo de Machine Learning
+*scikit-learn 1.3.2*
+- *Propósito:* Algoritmos de Machine Learning
+- *Justificación:*
+  - Librería más madura y probada en producción
+  - API consistente y bien documentada
+  - Optimizaciones de rendimiento incluidas
+  - Integración perfecta con Pandas/NumPy
+- *Módulos utilizados:*
 
+  *LogisticRegression*
+  - Modelo de clasificación supervisada
+  - Regularización L2 incorporada
+  - Múltiples solvers disponibles
+  
+  *train_test_split*
+  - División estratificada de datos
+  - Asegura reproducibilidad (random_state)
+  - Mantiene proporción de clases
+  
+  *Métricas (metrics)*
+  - accuracy_score: Exactitud general
+  - precision_score: Precisión (falsos positivos)
+  - recall_score: Exhaustividad (falsos negativos)
+  - f1_score: Balance Precision-Recall
+  
 ### **Configuración del Modelo**
 
 **Algoritmo:** Regresión Logística (Logistic Regression)
@@ -261,10 +327,10 @@ En el contexto educativo, los valores extremos **SON VÁLIDOS Y NECESARIOS**:
 
 ```python
 {
-    "max_iter": 1000,           # Iteraciones máximas
-    "C": 0.5,                   # Parámetro de regularización
-    "solver": "lbfgs",          # Algoritmo de optimización
-    "random_state": 42          # Semilla para reproducibilidad
+    "max_iter": 1000,            # Iteraciones máximas
+    "C": 0.5,                    # Parámetro de regularización
+    "solver": "lbfgs",           # Algoritmo de optimización
+    "random_state": 42           # Semilla para reproducibilidad
 }
 ```
 
@@ -290,10 +356,10 @@ El modelo se evalúa con 4 métricas principales:
 **Ejemplo de métricas obtenidas (CSV 1100 estudiantes):**
 
 ```
-Accuracy:   89.5%
+Accuracy:   89.5%
 Precision: 84.6%
-Recall:    85.7%
-F1-Score:  85.2%
+Recall:    85.7%
+F1-Score:  85.2%
 ```
 
 -----
