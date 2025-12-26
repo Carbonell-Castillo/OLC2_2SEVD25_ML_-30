@@ -1,0 +1,97 @@
+<section class="content-section animate-fade-in">
+    <div class="mb-10">
+        <h2 class="text-3xl font-bold text-white mb-2">
+            <i class="fas fa-microchip text-accent-purple mr-2"></i> Configuración del Modelo
+        </h2>
+        <p class="text-gray-400">Ajuste los hiperparámetros del algoritmo de clustering para optimizar la segmentación.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div class="lg:col-span-2 space-y-6">
+            <div class="bg-card-dark p-8 rounded-2xl border border-gray-800 shadow-xl">
+                
+                <div class="mb-10">
+                    <div class="flex justify-between mb-4">
+                        <label class="text-white font-medium">Cantidad de Grupos (K)</label>
+                        <span class="text-accent-purple font-bold">{{ numClusters }}</span>
+                    </div>
+                    <input type="range" min="2" max="20" [(ngModel)]="numClusters" 
+                        class="w-full h-2 bg-primary-dark rounded-lg appearance-none cursor-pointer accent-accent-purple">
+                    <div class="flex justify-between text-xs text-gray-500 mt-2">
+                        <span>Min: 2</span>
+                        <span>Max: 20</span>
+                    </div>
+                </div>
+
+                <div class="mb-10">
+                    <div class="flex justify-between mb-4">
+                        <label class="text-white font-medium">Máximas Iteraciones</label>
+                        <span class="text-accent-cyan font-bold">{{ maxIteraciones }}</span>
+                    </div>
+                    <input type="range" min="100" max="1000" step="50" [(ngModel)]="maxIteraciones" 
+                        class="w-full h-2 bg-primary-dark rounded-lg appearance-none cursor-pointer accent-accent-cyan">
+                    <div class="flex justify-between text-xs text-gray-500 mt-2">
+                        <span>100</span>
+                        <span>1000</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex flex-col">
+                        <label class="text-gray-400 text-sm mb-2">Variante del Algoritmo</label>
+                        <select [(ngModel)]="algoritmo" class="bg-primary-dark border border-gray-700 text-white rounded-lg p-3 outline-none focus:border-accent-purple transition">
+                            <option>K-Means++</option>
+                            <option>DBSCAN</option>
+                            <option>Agglomerative Clustering</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col">
+                        <label class="text-gray-400 text-sm mb-2">Métrica de Similitud</label>
+                        <select [(ngModel)]="metrica" class="bg-primary-dark border border-gray-700 text-white rounded-lg p-3 outline-none focus:border-accent-cyan transition">
+                            <option>Euclidiana</option>
+                            <option>Manhattan</option>
+                            <option>Coseno</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col gap-6">
+            <div class="bg-card-dark p-8 rounded-2xl border border-gray-800 shadow-xl flex-grow flex flex-col justify-center items-center text-center">
+                
+                <div class="relative mb-6">
+                    <div class="w-32 h-32 rounded-full border-4 border-gray-800 flex items-center justify-center">
+                        <i class="fas fa-brain text-4xl" [ngClass]="isTraining ? 'text-accent-purple animate-pulse' : 'text-gray-600'"></i>
+                    </div>
+                    <svg *ngIf="isTraining" class="absolute top-0 left-0 w-32 h-32 -rotate-90">
+                        <circle cx="64" cy="64" r="60" stroke="currentColor" stroke-width="4" fill="transparent"
+                            class="text-accent-purple" [style.stroke-dasharray]="377" [style.stroke-dashoffset]="377 - (377 * progress / 100)" />
+                    </svg>
+                </div>
+
+                <h3 class="text-xl font-bold text-white mb-2">
+                    {{ isTraining ? 'Entrenando...' : trainingComplete ? '¡Modelo Listo!' : 'Listo para Entrenar' }}
+                </h3>
+                <p class="text-gray-500 text-sm mb-8">
+                    {{ isTraining ? 'Procesando vectores de características y asignando centroides.' : 'Presione el botón para iniciar el aprendizaje no supervisado.' }}
+                </p>
+
+                <button (click)="iniciarEntrenamiento()" [disabled]="isTraining"
+                    class="w-full py-4 rounded-xl font-bold text-white transition-all duration-300 shadow-lg"
+                    [ngClass]="isTraining ? 'bg-gray-700 cursor-not-allowed' : 'bg-gradient-to-r from-purple-600 to-accent-purple hover:scale-105 shadow-purple-900/40'">
+                    <i class="fas" [ngClass]="isTraining ? 'fa-spinner fa-spin' : 'fa-play-circle'"></i>
+                    {{ isTraining ? ' Procesando...' : ' Iniciar Entrenamiento' }}
+                </button>
+            </div>
+
+            <div class="bg-accent-cyan/10 border border-accent-cyan/30 p-4 rounded-xl">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-info-circle text-accent-cyan"></i>
+                    <p class="text-xs text-cyan-100 italic">Los resultados se almacenarán automáticamente en la base de datos de <b>InsightCluster</b>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

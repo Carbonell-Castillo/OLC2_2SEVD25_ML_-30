@@ -1,0 +1,50 @@
+                <section id="carga" class="content-section active-section">
+                    <h2 class="text-3xl font-bold text-white mb-6"><i class="fas fa-cloud-upload-alt text-accent-purple mr-2"></i> Carga Masiva de Datos</h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        
+                        <div class="lg:col-span-2 bg-card-dark p-8 rounded-xl shadow-2xl hover:shadow-purple-900/40 transition duration-300">
+                            <h3 class="text-xl font-semibold text-white mb-6 border-b border-gray-700 pb-3">Zona de Arrastre y Procesamiento</h3>
+                            
+                            <div class="flex gap-6">
+                                <div class="flex-1 text-center border-4 border-dashed border-accent-purple rounded-xl p-12 bg-primary-dark/50 hover:bg-primary-dark/70 transition duration-300 cursor-pointer group">
+                                    <i class="fas fa-box-open text-6xl text-accent-purple mb-4 group-hover:scale-110 transition duration-300"></i>
+                                    <p class="text-lg font-semibold text-white">Arrastra y suelta tu archivo aquí</p>
+                                    <p class="text-sm text-gray-400 mb-6">Formatos: CSV, XLSX. Máx: 100MB</p>
+                                    <input type="file" id="file-upload" accept=".csv, .xlsx" class="hidden">
+                                    <button onclick="document.getElementById('file-upload').click()" class="py-2 px-6 rounded-lg bg-accent-purple hover:bg-purple-800 font-medium transition duration-200">
+                                        Seleccionar Archivo
+                                    </button>
+                                </div>
+                                
+                                <div class="w-1/3 bg-primary-dark p-6 rounded-xl border border-gray-700 flex flex-col justify-between">
+                                    <div>
+                                        <h4 class="text-accent-cyan font-bold mb-4">Estado de la Tarea</h4>
+                                        <div class="gauge-arc mx-auto mb-6">
+                                            <span class="text-2xl font-extrabold text-accent-purple">15%</span>
+                                        </div>
+                                        <p class="text-sm text-gray-400 text-center mb-6">Pendiente de limpieza de datos.</p>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <button class="w-full py-3 rounded-lg bg-gray-600 hover:bg-gray-500 font-medium transition duration-200 flex items-center justify-center">
+                                            <i class="fas fa-broom mr-2"></i> Limpiar Datos
+                                        </button>                            
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-card-dark p-6 rounded-xl shadow-xl">
+                            <h3 class="text-xl font-semibold text-white mb-4"><i class="fas fa-history text-accent-cyan mr-2"></i> Historial Reciente</h3>
+                            <ul class="divide-y divide-gray-700">
+                                <li class="py-3 flex justify-between items-center group hover:bg-primary-dark/50 transition duration-200 px-2 rounded-md cursor-pointer">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-file-csv mr-3 text-green-500"></i> Prueba.csv
+                                    </span>
+                                    <span class="text-xs font-bold text-green-400 bg-green-900/50 px-2 py-1 rounded-full">Completado</span>
+                                </li>
+                            
+                            </ul>
+                        </div>
+
+                    </div>
+                </section>
