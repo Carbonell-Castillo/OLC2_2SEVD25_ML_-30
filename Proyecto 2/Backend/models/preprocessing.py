@@ -280,3 +280,53 @@ class DataPreprocessor:
         words = [w for w in text.split() if w not in stopwords and len(w) > 2]
         
         return ' '.join(words)
+    
+    # ========== MÉTODO NUEVO (AL MISMO NIVEL QUE clean_review_text) ==========
+    def calculate_cluster_stats(self, df, labels):
+        """
+        Calcular estadísticas por cluster
+        
+        Args:
+            df: DataFrame con los datos
+            labels: Array con las etiquetas de cluster
+            
+        Returns:
+            list: Lista de diccionarios con estadísticas por cluster
+        """
+        import numpy as np
+        
+        df_temp = df.copy()
+        df_temp['cluster'] = labels
+        
+        stats = []
+        
+        for cluster_id in sorted(df_temp['cluster'].unique()):
+            cluster_data = df_temp[df_temp['cluster'] == cluster_id]
+            
+            # Características numéricas promedio
+            characteristics = {}
+            numeric_cols = [
+                'frecuencia_compra',
+                'monto_total_gastado',
+                'monto_promedio_compra',
+                'dias_desde_ultima_compra'
+            ]
+            
+            for col in numeric_cols:
+                if col in cluster_data.columns:
+                    characteristics[col] = round(cluster_data[col].mean(), 2)
+            
+            # Canal principal (moda)
+            canal_principal = "N/A"
+            if 'canal_principal' in cluster_data.columns:
+                canal_principal = cluster_data['canal_principal'].mode()[0] if len(cluster_data['canal_principal'].mode()) > 0 else "N/A"
+            
+            stats.append({
+                "cluster_id": int(cluster_id),
+                "size": int(len(cluster_data)),
+                "percentage": round((len(cluster_data) / len(df_temp)) * 100, 2),
+                "characteristics": characteristics,
+                "canal_principal": canal_principal
+            })
+        
+        return stats

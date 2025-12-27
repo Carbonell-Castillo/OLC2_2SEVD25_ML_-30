@@ -2,6 +2,7 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from pydantic import BaseModel
 import pandas as pd
 import numpy as np
 from datetime import datetime
@@ -9,6 +10,8 @@ import os
 
 from models.preprocessing import DataPreprocessor
 from models.kmeans import KMeans
+from models.text_clustering import TextClusterer
+from utils.metrics import ClusteringMetrics
 
 app = FastAPI(
     title="InsightCluster API",
@@ -27,6 +30,14 @@ app.add_middleware(
 
 # Almacenamiento temporal
 storage = {}
+
+#  MODELO DE DATOS PARA TRAINING 
+class TrainRequest(BaseModel):
+    """Modelo de datos para request de entrenamiento"""
+    file_id: str
+    n_clusters: int = 3
+    max_iterations: int = 100
+    random_state: int = 42
 
 @app.get("/")
 def root():
@@ -113,105 +124,113 @@ def get_file_info(file_id: str):
     return storage[file_id]
 
 @app.post("/train")
-def train_model(
-    file_id: str,
-    n_clusters: int = 3,
-    max_iterations: int = 100,
-    random_state: int = 42
-):
-    """
-    Entrenar modelo K-Means
+def train_model(request: TrainRequest):
+    """Entrenar modelo K-Means"""
+    file_id = request.file_id
+    n_clusters = request.n_clusters
+    max_iterations = request.max_iterations
+    random_state = request.random_state
     
-    Parámetros:
-    - file_id: ID del archivo cargado
-    - n_clusters: Número de clusters (2-10)
-    - max_iterations: Máximo de iteraciones (50-500)
-    - random_state: Semilla para reproducibilidad
-    """
-    try:
-        # Validar archivo
-        if file_id not in storage:
-            raise HTTPException(status_code=404, detail="Archivo no encontrado")
-        
-        # Validar parámetros
-        if not 2 <= n_clusters <= 10:
-            raise HTTPException(400, "n_clusters debe estar entre 2 y 10")
-        
-        if not 50 <= max_iterations <= 500:
-            raise HTTPException(400, "max_iterations debe estar entre 50 y 500")
-        
-        # Cargar y preprocesar
-        filepath = storage[file_id]["filepath"]
-        preprocessor = DataPreprocessor()
-        X_scaled, df, feature_names = preprocessor.load_and_clean(filepath)
-        
-        # Entrenar K-Means
-        print(f"\n Entrenando K-Means con {n_clusters} clusters...")
-        kmeans = KMeans(
-            n_clusters=n_clusters,
-            max_iterations=max_iterations,
-            random_state=random_state
-        )
-        labels = kmeans.fit_predict(X_scaled)
-        
-        # Agregar clusters
-        df['cluster'] = labels
-        
-        # Calcular estadísticas por cluster
-        cluster_stats = []
-        for cluster_id in range(n_clusters):
-            cluster_data = df[df['cluster'] == cluster_id]
+    # Validar file_id
+    if file_id not in storage:
+        raise HTTPException(status_code=404, detail="File ID not found")
+    
+    # Obtener archivo
+    file_path = storage[file_id]["filepath"]
+    
+    # Preprocesar
+    preprocessor = DataPreprocessor()
+    X_scaled, df, feature_names = preprocessor.load_and_clean(file_path)
+    
+    # Entrenar K-Means (CLIENTES)
+    print(f" Entrenando K-Means con {n_clusters} clusters...")
+    kmeans = KMeans(n_clusters=n_clusters, max_iterations=max_iterations, random_state=random_state)
+    kmeans.fit(X_scaled)
+    
+    
+    # Agregar columna de cluster al DataFrame
+    df['cluster'] = kmeans.labels
+    
+    # Calcular estadísticas por cluster
+    cluster_stats = preprocessor.calculate_cluster_stats(df, kmeans.labels)
+    
+
+    #  CALCULAR MÉTRICAS 
+    print(" Calculando métricas de evaluación...")
+    metrics = ClusteringMetrics.calculate_all_metrics(X_scaled, kmeans.labels)
+    
+    if 'error' not in metrics:
+        print(f"    Silhouette Score: {metrics['silhouette_score']:.4f}")
+        print(f"    Calinski-Harabasz: {metrics['calinski_harabasz_score']:.2f}")
+        print(f"    Davies-Bouldin: {metrics['davies_bouldin_score']:.4f}")
+        print(f"    Calificación: {metrics['interpretation']['overall_quality']}")
+    
+    # Clustering de texto
+    
+    review_clustering = None
+    
+    if 'texto_limpio' in df.columns:
+        try:
+            print(" Iniciando clustering de reseñas...")
             
-            stats = {
-                "cluster_id": int(cluster_id),
-                "size": len(cluster_data),
-                "percentage": round(len(cluster_data) / len(df) * 100, 2),
-                "characteristics": {}
+            # Crear clusterer de texto
+            text_clusterer = TextClusterer(
+                n_clusters=3,           # 3 clusters de reseñas
+                max_features=100        # Top 100 palabras
+            )
+            
+            # Entrenar y predecir
+            review_labels = text_clusterer.fit_predict(df['texto_limpio'])
+            
+            # Obtener palabras clave por cluster
+            top_terms = text_clusterer.get_top_terms(n_terms=5)
+            
+            # Obtener estadísticas
+            review_stats = text_clusterer.get_cluster_stats(review_labels)
+            
+            # Guardar resultados
+            review_clustering = {
+                "n_clusters": 3,
+                "labels": review_labels.tolist(),
+                "cluster_stats": review_stats,
+                "top_keywords": top_terms
             }
             
-            # Características numéricas
-            numeric_features = [
-                'frecuencia_compra', 'monto_total_gastado',
-                'monto_promedio_compra', 'dias_desde_ultima_compra'
-            ]
-            
-            for feat in numeric_features:
-                if feat in cluster_data.columns:
-                    stats["characteristics"][feat] = round(cluster_data[feat].mean(), 2)
-            
-            # Canal principal
-            if 'canal_principal' in cluster_data.columns:
-                top_channel = cluster_data['canal_principal'].mode()
-                if len(top_channel) > 0:
-                    stats["canal_principal"] = top_channel.iloc[0]
-            
-            cluster_stats.append(stats)
+            print(f" Clustering de texto completo:")
+            for cluster_id, keywords in top_terms.items():
+                print(f"   Cluster {cluster_id}: {', '.join(keywords)}")
         
-        # Guardar resultados
-        output_path = f"data/exports/{file_id}_clustered.csv"
-        df.to_csv(output_path, index=False)
-        
-        storage[file_id]["results"] = {
-            "n_clusters": n_clusters,
-            "inertia": float(kmeans.inertia_),
-            "labels": labels.tolist(),
-            "cluster_stats": cluster_stats,
-            "feature_names": feature_names,
-            "output_path": output_path,
-            "trained_at": datetime.now().isoformat()
-        }
-        
-        return {
-            "status": "success",
-            "message": "Modelo entrenado correctamente",
-            "file_id": file_id,
-            "n_clusters": n_clusters,
-            "inertia": float(kmeans.inertia_),
-            "cluster_stats": cluster_stats
-        }
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        except Exception as e:
+            print(f" Error en clustering de texto: {e}")
+            review_clustering = None
+    
+    # Guardar CSV con resultados
+    output_path = f"data/exports/{file_id}_clustered.csv"
+    df.to_csv(output_path, index=False)
+    
+    # Guardar resultados en memoria
+    storage[file_id]["results"] = {
+        "n_clusters": n_clusters,
+        "inertia": kmeans.inertia_,
+        "labels": kmeans.labels.tolist(),
+        "cluster_stats": cluster_stats,
+        "metrics": metrics,
+        "feature_names": feature_names,
+        "output_path": output_path,
+        "trained_at": datetime.now().isoformat(),
+        "review_clustering": review_clustering 
+    }
+    
+    return {
+        "status": "success",
+        "message": "Modelo entrenado correctamente",
+        "file_id": file_id,
+        "n_clusters": n_clusters,
+        "inertia": kmeans.inertia_,
+        "metrics": metrics,
+        "cluster_stats": cluster_stats,
+        "review_clustering": review_clustering  
+    }
 
 @app.get("/results/{file_id}")
 def get_results(file_id: str):
@@ -243,6 +262,14 @@ def download_results(file_id: str):
         media_type='text/csv',
         filename=f"resultados_{file_id}.csv"
     )
+
+@app.get("/metrics/info")
+def get_metrics_info():
+    """
+    Obtener información sobre las métricas de evaluación
+    """
+    return ClusteringMetrics.get_metric_ranges()
+
 
 @app.get("/health")
 def health_check():
