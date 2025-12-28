@@ -8,7 +8,14 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from datetime import datetime
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import cm
+from reportlab.lib import colors
+from PIL import Image
+
 import os
+
 
 from models.preprocessing import DataPreprocessor
 from models.kmeans import KMeans
@@ -455,6 +462,303 @@ def generate_visualization(file_id: str):
             "total": round(sum(pca.explained_variance_ratio_), 4)
         }
     }
+
+@app.get("/export/pdf/{file_id}")
+def export_pdf(file_id: str):
+    """
+    Exportar reporte PDF profesional con resultados y visualización PCA
+    """
+
+    # ================= VALIDAR =================
+    if file_id not in storage or "results" not in storage[file_id]:
+        raise HTTPException(status_code=404, detail="Resultados no encontrados")
+
+    results = storage[file_id]["results"]
+
+    # ================= RUTAS =================
+    os.makedirs("data/reports", exist_ok=True)
+    pdf_path = f"data/reports/{file_id}_reporte.pdf"
+
+    image_path = f"data/visualizations/{file_id}_pcaGrafica.png"
+    has_image = os.path.exists(image_path)
+
+    # ================= CREAR PDF =================
+    c = canvas.Canvas(pdf_path, pagesize=A4)
+    width, height = A4
+    
+    # Colores corporativos
+    color_primary = colors.HexColor("#2E86AB")
+    color_secondary = colors.HexColor("#A23B72")
+    color_dark = colors.HexColor("#1a1a1a")
+    color_light_gray = colors.HexColor("#f5f5f5")
+    
+    # ================= PÁGINA 1: PORTADA =================
+    # Fondo del encabezado
+    c.setFillColor(color_primary)
+    c.rect(0, height - 8*cm, width, 8*cm, fill=True, stroke=False)
+    
+    # Título principal
+    c.setFillColor(colors.white)
+    c.setFont("Helvetica-Bold", 28)
+    c.drawCentredString(width/2, height - 4*cm, "InsightCluster")
+    
+    c.setFont("Helvetica", 16)
+    c.drawCentredString(width/2, height - 5*cm, "Reporte de Segmentación de Clientes")
+    
+    # Información del análisis
+    y = height - 10*cm
+    c.setFillColor(color_dark)
+    c.setFont("Helvetica-Bold", 12)
+    c.drawString(3*cm, y, "Información del Análisis")
+    y -= 0.8*cm
+    
+    c.setFont("Helvetica", 10)
+    c.drawString(3*cm, y, f"ID de análisis:")
+    c.setFont("Helvetica-Bold", 10)
+    c.drawString(7*cm, y, f"{file_id}")
+    y -= 0.6*cm
+    
+    c.setFont("Helvetica", 10)
+    c.drawString(3*cm, y, f"Fecha de entrenamiento:")
+    c.setFont("Helvetica-Bold", 10)
+    c.drawString(7*cm, y, f"{results['trained_at']}")
+    y -= 0.6*cm
+    
+    c.setFont("Helvetica", 10)
+    c.drawString(3*cm, y, f"Número de clusters:")
+    c.setFont("Helvetica-Bold", 10)
+    c.drawString(7*cm, y, f"{results['n_clusters']}")
+    y -= 1.5*cm
+    
+    # Resumen ejecutivo
+    interpretation = results["metrics"].get("interpretation", {})
+    
+    if interpretation:
+        # Caja con fondo
+        c.setFillColor(color_light_gray)
+        c.roundRect(2.5*cm, y - 3*cm, width - 5*cm, 3.5*cm, 10, fill=True, stroke=False)
+        
+        c.setFillColor(color_dark)
+        c.setFont("Helvetica-Bold", 12)
+        c.drawString(3*cm, y, "Resumen Ejecutivo")
+        y -= 0.8*cm
+        
+        c.setFont("Helvetica", 10)
+        c.drawString(3*cm, y, f"Calidad del modelo:")
+        c.setFont("Helvetica-Bold", 10)
+        c.drawString(7*cm, y, f"{interpretation.get('overall_quality', 'N/A')}")
+        y -= 0.6*cm
+        
+        c.setFont("Helvetica", 10)
+        c.drawString(3*cm, y, f"Recomendación:")
+        y -= 0.5*cm
+        
+        # Texto de recomendación con wrap
+        recommendation_text = interpretation.get('recommendation', 'N/A')
+        c.setFont("Helvetica", 9)
+        text_object = c.beginText(3*cm, y)
+        text_object.setFont("Helvetica", 9)
+        
+        # Simple text wrap
+        words = recommendation_text.split()
+        line = ""
+        for word in words:
+            if len(line + word) < 70:
+                line += word + " "
+            else:
+                text_object.textLine(line)
+                line = word + " "
+        if line:
+            text_object.textLine(line)
+        
+        c.drawText(text_object)
+    
+    # Pie de página
+    c.setFillColor(colors.grey)
+    c.setFont("Helvetica", 8)
+    c.drawCentredString(width/2, 2*cm, "Generado automáticamente por InsightCluster")
+    c.drawCentredString(width/2, 1.5*cm, f"Página 1")
+    
+    # ================= PÁGINA 2: VISUALIZACIÓN PCA =================
+    c.showPage()
+    y = height - 2.5*cm
+    
+    # Encabezado
+    c.setFillColor(color_primary)
+    c.setFont("Helvetica-Bold", 18)
+    c.drawString(2*cm, y, "Visualización de Segmentos")
+    y -= 0.5*cm
+    
+    c.setFillColor(color_dark)
+    c.setFont("Helvetica", 10)
+    c.drawString(2*cm, y, "Análisis de Componentes Principales (PCA)")
+    y -= 1.5*cm
+    
+    # Insertar imagen
+    if has_image:
+        try:
+            # Convertir imagen a RGB
+            rgb_image_path = image_path.replace(".png", "_rgb.png")
+            
+            with Image.open(image_path) as img:
+                if img.mode in ("RGBA", "P"):
+                    img = img.convert("RGB")
+                img.save(rgb_image_path)
+            
+            # Dimensiones de la imagen
+            img_width = width - 4*cm
+            img_height = 16*cm
+            img_y = y - img_height
+            
+            c.drawImage(
+                rgb_image_path,
+                2*cm,
+                img_y,
+                width=img_width,
+                height=img_height,
+                preserveAspectRatio=True,
+                mask='auto'
+            )
+            
+            # Limpiar archivo temporal
+            if os.path.exists(rgb_image_path) and rgb_image_path != image_path:
+                os.remove(rgb_image_path)
+            
+            y = img_y - 1*cm
+            
+        except Exception as e:
+            c.setFont("Helvetica", 10)
+            c.drawString(2*cm, y, f"⚠ Error al cargar visualización: {str(e)}")
+            y -= 1*cm
+    else:
+        c.setFont("Helvetica-Oblique", 10)
+        c.drawString(2*cm, y, "Visualización no disponible. Genere primero la gráfica PCA.")
+        y -= 1*cm
+    
+    # Pie de página
+    c.setFillColor(colors.grey)
+    c.setFont("Helvetica", 8)
+    c.drawCentredString(width/2, 1.5*cm, f"Página 2")
+    
+    # ================= PÁGINA 3: MÉTRICAS Y CLUSTERS =================
+    c.showPage()
+    y = height - 2.5*cm
+    
+    # Encabezado
+    c.setFillColor(color_primary)
+    c.setFont("Helvetica-Bold", 18)
+    c.drawString(2*cm, y, "Métricas y Segmentos")
+    y -= 1.5*cm
+    
+    # Métricas en caja
+    c.setFillColor(color_light_gray)
+    c.roundRect(2*cm, y - 3*cm, width - 4*cm, 3.5*cm, 10, fill=True, stroke=False)
+    
+    c.setFillColor(color_dark)
+    c.setFont("Helvetica-Bold", 12)
+    c.drawString(2.5*cm, y, "Métricas de Evaluación")
+    y -= 0.8*cm
+    
+    metrics = results["metrics"]
+    c.setFont("Helvetica", 10)
+    c.drawString(2.5*cm, y, f"Silhouette Score:")
+    c.setFont("Helvetica-Bold", 10)
+    silhouette = metrics.get('silhouette_score', 0)
+    c.drawString(7*cm, y, f"{silhouette:.4f}")
+    c.setFont("Helvetica-Oblique", 8)
+    c.drawString(10*cm, y, "(Cercano a 1 = mejor separación)")
+    y -= 0.6*cm
+    
+    c.setFont("Helvetica", 10)
+    c.drawString(2.5*cm, y, f"Davies-Bouldin Index:")
+    c.setFont("Helvetica-Bold", 10)
+    davies = metrics.get('davies_bouldin_score', 0)
+    c.drawString(7*cm, y, f"{davies:.4f}")
+    c.setFont("Helvetica-Oblique", 8)
+    c.drawString(10*cm, y, "(Cercano a 0 = mejor separación)")
+    y -= 1.8*cm
+    
+    # Segmentos identificados
+    c.setFillColor(color_secondary)
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(2*cm, y, "Segmentos Identificados")
+    y -= 1*cm
+    
+    c.setFillColor(color_dark)
+    
+    for idx, cluster in enumerate(results["cluster_stats"]):
+        # Caja para cada cluster
+        box_height = 3.2*cm
+        
+        if y - box_height < 3*cm:
+            c.showPage()
+            y = height - 2.5*cm
+            c.setFillColor(color_dark)
+        
+        c.setFillColor(color_light_gray)
+        c.roundRect(2*cm, y - box_height, width - 4*cm, box_height, 8, fill=True, stroke=False)
+        
+        c.setFillColor(colors.white)
+        c.setFillColor(color_primary)
+        c.circle(2.7*cm, y - 0.5*cm, 0.3*cm, fill=True, stroke=False)
+        
+        c.setFillColor(color_dark)
+        c.setFont("Helvetica-Bold", 11)
+        c.drawString(3.3*cm, y - 0.65*cm, f"Cluster {cluster['cluster_id']}")
+        y -= 1.2*cm
+        
+        c.setFont("Helvetica", 9)
+        c.drawString(2.7*cm, y, f"Tamaño:")
+        c.setFont("Helvetica-Bold", 9)
+        c.drawString(5*cm, y, f"{cluster['size']} clientes ({cluster['percentage']}%)")
+        y -= 0.5*cm
+        
+        c.setFont("Helvetica", 9)
+        c.drawString(2.7*cm, y, f"Canal principal:")
+        c.setFont("Helvetica-Bold", 9)
+        c.drawString(5*cm, y, f"{cluster.get('main_channel', 'N/A')}")
+        y -= 0.5*cm
+        
+        c.setFont("Helvetica", 9)
+        c.drawString(2.7*cm, y, f"Descripción:")
+        y -= 0.4*cm
+        
+        # Wrap description
+        description = cluster.get('description', 'Sin descripción')
+        c.setFont("Helvetica", 8)
+        text_object = c.beginText(2.7*cm, y)
+        text_object.setFont("Helvetica", 8)
+        
+        words = description.split()
+        line = ""
+        for word in words:
+            if len(line + word) < 75:
+                line += word + " "
+            else:
+                text_object.textLine(line)
+                line = word + " "
+        if line:
+            text_object.textLine(line)
+        
+        c.drawText(text_object)
+        y -= 1.3*cm
+    
+    # Pie de página
+    c.setFillColor(colors.grey)
+    c.setFont("Helvetica", 8)
+    c.drawCentredString(width/2, 1.5*cm, f"Página 3")
+    
+    # ================= GUARDAR =================
+    c.save()
+
+    return {
+        "status": "success",
+        "message": "Reporte PDF generado correctamente",
+        "pdf_path": pdf_path,
+        "includes_visualization": has_image,
+        "pages": 3
+    }
+
 
 @app.get("/health")
 def health_check():

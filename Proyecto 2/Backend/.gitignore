@@ -17,6 +17,7 @@ data/uploads/*.xls
 data/exports/*.csv
 data/exports/*.xlsx
 data/exports/*.xls
+data
 
 # Data - PERO sí subir los .gitkeep
 !data/uploads/.gitkeep
