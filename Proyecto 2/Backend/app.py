@@ -12,6 +12,8 @@ from models.preprocessing import DataPreprocessor
 from models.kmeans import KMeans
 from models.text_clustering import TextClusterer
 from utils.metrics import ClusteringMetrics
+from models.profiling import ClusterProfiler
+
 
 app = FastAPI(
     title="InsightCluster API",
@@ -125,123 +127,180 @@ def get_file_info(file_id: str):
 
 @app.post("/train")
 def train_model(request: TrainRequest):
-    """Entrenar modelo K-Means"""
+    """Entrenar modelo K-Means y devolver respuesta limpia para frontend"""
+
     file_id = request.file_id
     n_clusters = request.n_clusters
     max_iterations = request.max_iterations
     random_state = request.random_state
-    
-    # Validar file_id
+
+    # ================= VALIDAR FILE =================
     if file_id not in storage:
         raise HTTPException(status_code=404, detail="File ID not found")
-    
-    # Obtener archivo
+
     file_path = storage[file_id]["filepath"]
-    
-    # Preprocesar
+
+    # ================= PREPROCESAMIENTO =================
     preprocessor = DataPreprocessor()
     X_scaled, df, feature_names = preprocessor.load_and_clean(file_path)
-    
-    # Entrenar K-Means (CLIENTES)
-    print(f" Entrenando K-Means con {n_clusters} clusters...")
-    kmeans = KMeans(n_clusters=n_clusters, max_iterations=max_iterations, random_state=random_state)
-    kmeans.fit(X_scaled)
-    
-    
-    # Agregar columna de cluster al DataFrame
-    df['cluster'] = kmeans.labels
-    
-    # Calcular estadísticas por cluster
-    cluster_stats = preprocessor.calculate_cluster_stats(df, kmeans.labels)
-    
 
-    #  CALCULAR MÉTRICAS 
-    print(" Calculando métricas de evaluación...")
+    # ================= K-MEANS CLIENTES =================
+    kmeans = KMeans(
+        n_clusters=n_clusters,
+        max_iterations=max_iterations,
+        random_state=random_state
+    )
+    kmeans.fit(X_scaled)
+
+    df["cluster"] = kmeans.labels
+
+    # ================= STATS =================
+    cluster_stats = preprocessor.calculate_cluster_stats(df, kmeans.labels)
+
+    # ================= MÉTRICAS =================
     metrics = ClusteringMetrics.calculate_all_metrics(X_scaled, kmeans.labels)
-    
-    if 'error' not in metrics:
-        print(f"    Silhouette Score: {metrics['silhouette_score']:.4f}")
-        print(f"    Calinski-Harabasz: {metrics['calinski_harabasz_score']:.2f}")
-        print(f"    Davies-Bouldin: {metrics['davies_bouldin_score']:.4f}")
-        print(f"    Calificación: {metrics['interpretation']['overall_quality']}")
-    
-    # Clustering de texto
-    
+
+    # ================= CLUSTERING DE TEXTO =================
     review_clustering = None
-    
-    if 'texto_limpio' in df.columns:
+
+    if "texto_limpio" in df.columns:
         try:
-            print(" Iniciando clustering de reseñas...")
-            
-            # Crear clusterer de texto
             text_clusterer = TextClusterer(
-                n_clusters=3,           # 3 clusters de reseñas
-                max_features=100        # Top 100 palabras
+                n_clusters=3,
+                max_features=100
             )
-            
-            # Entrenar y predecir
-            review_labels = text_clusterer.fit_predict(df['texto_limpio'])
-            
-            # Obtener palabras clave por cluster
+
+            review_labels = text_clusterer.fit_predict(df["texto_limpio"])
             top_terms = text_clusterer.get_top_terms(n_terms=5)
-            
-            # Obtener estadísticas
             review_stats = text_clusterer.get_cluster_stats(review_labels)
-            
-            # Guardar resultados
+
             review_clustering = {
                 "n_clusters": 3,
-                "labels": review_labels.tolist(),
                 "cluster_stats": review_stats,
                 "top_keywords": top_terms
             }
-            
-            print(f" Clustering de texto completo:")
-            for cluster_id, keywords in top_terms.items():
-                print(f"   Cluster {cluster_id}: {', '.join(keywords)}")
-        
-        except Exception as e:
-            print(f" Error en clustering de texto: {e}")
+
+        except Exception:
             review_clustering = None
-    
-    # Guardar CSV con resultados
+
+    # ================= PROFILING =================
+    profiler = ClusterProfiler(
+        df=df,
+        cluster_stats=cluster_stats,
+        review_clustering=review_clustering
+    )
+
+    cluster_profiles = profiler.generate_profiles()
+
+    # ================= EXPORT CSV =================
     output_path = f"data/exports/{file_id}_clustered.csv"
     df.to_csv(output_path, index=False)
-    
-    # Guardar resultados en memoria
+
+    # ================= GUARDAR RESULTADOS COMPLETOS =================
     storage[file_id]["results"] = {
         "n_clusters": n_clusters,
         "inertia": kmeans.inertia_,
-        "labels": kmeans.labels.tolist(),
         "cluster_stats": cluster_stats,
+        "cluster_profiles": cluster_profiles,
         "metrics": metrics,
         "feature_names": feature_names,
+        "review_clustering": review_clustering,
         "output_path": output_path,
-        "trained_at": datetime.now().isoformat(),
-        "review_clustering": review_clustering 
+        "trained_at": datetime.now().isoformat()
     }
-    
-    return {
+
+    # ================= RESPUESTA LIMPIA PARA FRONTEND =================
+    clean_response = {
         "status": "success",
-        "message": "Modelo entrenado correctamente",
         "file_id": file_id,
-        "n_clusters": n_clusters,
-        "inertia": kmeans.inertia_,
-        "metrics": metrics,
-        "cluster_stats": cluster_stats,
-        "review_clustering": review_clustering  
+        "summary": {
+            "n_clusters": n_clusters,
+            "overall_quality": metrics.get("interpretation", {}).get("overall_quality"),
+            "recommendation": metrics.get("interpretation", {}).get("recommendation")
+        },
+        "metrics": {
+            "silhouette_score": metrics.get("silhouette_score"),
+            "davies_bouldin_score": metrics.get("davies_bouldin_score")
+        },
+        "clusters": [],
+        "reviews": {
+            "enabled": review_clustering is not None,
+            "clusters": []
+        }
     }
+
+    # Agregar perfiles de clusters
+    for profile in cluster_profiles:
+        clean_response["clusters"].append({
+            "cluster_id": profile["cluster_id"],
+            "size": profile["size"],
+            "percentage": profile["percentage"],
+            "description": profile["description"],
+            "main_channel": profile.get("canal_principal")
+        })
+
+    # Agregar info de reseñas
+    if review_clustering:
+        for cluster_id, keywords in review_clustering["top_keywords"].items():
+            clean_response["reviews"]["clusters"].append({
+                "cluster_id": cluster_id,
+                "top_keywords": keywords
+            })
+
+    return clean_response
 
 @app.get("/results/{file_id}")
 def get_results(file_id: str):
-    """Obtener resultados del clustering"""
-    if file_id not in storage:
-        raise HTTPException(404, "Archivo no encontrado")
-    
-    if "results" not in storage[file_id]:
-        raise HTTPException(404, "Este archivo no ha sido procesado. Entrene el modelo primero.")
-    
-    return storage[file_id]["results"]
+    """Obtener resultados del clustering en formato limpio para frontend"""
+
+    if file_id not in storage or "results" not in storage[file_id]:
+        raise HTTPException(status_code=404, detail="Resultados no encontrados")
+
+    results = storage[file_id]["results"]
+    metrics = results.get("metrics", {})
+    cluster_profiles = results.get("cluster_profiles", [])
+    review_clustering = results.get("review_clustering")
+
+    clean_response = {
+        "status": "success",
+        "file_id": file_id,
+        "summary": {
+            "n_clusters": results.get("n_clusters"),
+            "overall_quality": metrics.get("interpretation", {}).get("overall_quality"),
+            "recommendation": metrics.get("interpretation", {}).get("recommendation"),
+            "trained_at": results.get("trained_at")
+        },
+        "metrics": {
+            "silhouette_score": metrics.get("silhouette_score"),
+            "davies_bouldin_score": metrics.get("davies_bouldin_score")
+        },
+        "clusters": [],
+        "reviews": {
+            "enabled": review_clustering is not None,
+            "clusters": []
+        }
+    }
+
+    # Agregar perfiles de clusters
+    for profile in cluster_profiles:
+        clean_response["clusters"].append({
+            "cluster_id": profile["cluster_id"],
+            "size": profile["size"],
+            "percentage": profile["percentage"],
+            "description": profile["description"],
+            "main_channel": profile.get("canal_principal")
+        })
+
+    # Agregar info de reseñas (si existe)
+    if review_clustering:
+        for cluster_id, keywords in review_clustering.get("top_keywords", {}).items():
+            clean_response["reviews"]["clusters"].append({
+                "cluster_id": cluster_id,
+                "top_keywords": keywords
+            })
+
+    return clean_response
+
 
 @app.get("/download/{file_id}")
 def download_results(file_id: str):
