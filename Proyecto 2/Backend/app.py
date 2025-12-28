@@ -3,8 +3,10 @@ from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
+from sklearn.decomposition import PCA
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 from datetime import datetime
 import os
 
@@ -329,6 +331,130 @@ def get_metrics_info():
     """
     return ClusteringMetrics.get_metric_ranges()
 
+@app.get("/visualization/{file_id}")
+def generate_visualization(file_id: str):
+    """
+    Generar visualización PCA 2D con nombres dinámicos de clusters
+    """
+
+    # ================= VALIDAR =================
+    if file_id not in storage or "results" not in storage[file_id]:
+        raise HTTPException(status_code=404, detail="Resultados no encontrados")
+
+    results = storage[file_id]["results"]
+    clustered_path = results["output_path"]
+
+    if not os.path.exists(clustered_path):
+        raise HTTPException(status_code=404, detail="Archivo clusterizado no encontrado")
+
+    # ================= CARGAR CSV CLUSTERIZADO =================
+    df = pd.read_csv(clustered_path)
+
+    if "cluster" not in df.columns:
+        raise HTTPException(status_code=400, detail="Clusters no disponibles")
+
+    # ================= PREPROCESAMIENTO PARA PCA =================
+    preprocessor = DataPreprocessor()
+    X_scaled, _, feature_names = preprocessor.load_and_clean(clustered_path)
+
+    # ================= PCA =================
+    pca = PCA(n_components=2)
+    X_pca = pca.fit_transform(X_scaled)
+
+    df["pca_1"] = X_pca[:, 0]
+    df["pca_2"] = X_pca[:, 1]
+
+    # ================= FUNCIÓN PARA NOMBRE DE CLUSTER =================
+    def infer_cluster_name(cluster_df):
+        if "canal_principal" not in cluster_df.columns:
+            return "Clientes Mixtos"
+
+        canal = cluster_df["canal_principal"].mode().iloc[0]
+
+        if canal == "web":
+            return "Clientes Digitales"
+        if canal == "tienda física":
+            return "Clientes Presenciales"
+        if canal == "call center":
+            return "Clientes Telefónicos"
+
+        return "Clientes Mixtos"
+
+    # ================= CONFIGURACIÓN DE ESTILO =================
+    plt.style.use('seaborn-v0_8-darkgrid')
+    fig, ax = plt.subplots(figsize=(12, 8), facecolor='white')
+    
+    # Paleta de colores moderna
+    colors = ['#2E86AB', '#A23B72', '#F18F01', '#C73E1D', '#6A994E', '#BC4B51']
+    
+    cluster_names = {}
+
+    # ================= GRAFICAR =================
+    for idx, cluster_id in enumerate(sorted(df["cluster"].unique())):
+        subset = df[df["cluster"] == cluster_id]
+        cluster_name = infer_cluster_name(subset)
+        cluster_names[int(cluster_id)] = cluster_name
+        
+        color = colors[idx % len(colors)]
+        
+        # Scatter con borde
+        ax.scatter(
+            subset["pca_1"],
+            subset["pca_2"],
+            label=f"{cluster_name}",
+            alpha=0.7,
+            s=80,
+            color=color,
+            edgecolors='white',
+            linewidth=0.5
+        )
+
+    # ================= ESTILIZAR EJES Y TÍTULO =================
+    var_pc1 = pca.explained_variance_ratio_[0] * 100
+    var_pc2 = pca.explained_variance_ratio_[1] * 100
+    
+    ax.set_xlabel(f'PC1: Intensidad de consumo ({var_pc1:.1f}% varianza)', 
+                  fontsize=12, fontweight='bold', color='#333333')
+    ax.set_ylabel(f'PC2: Variación en hábitos ({var_pc2:.1f}% varianza)', 
+                  fontsize=12, fontweight='bold', color='#333333')
+    ax.set_title('Segmentación de Clientes mediante PCA', 
+                 fontsize=16, fontweight='bold', color='#1a1a1a', pad=20)
+    
+    # Leyenda mejorada
+    legend = ax.legend(loc='best', frameon=True, shadow=True, 
+                      fontsize=10, title='Segmentos', title_fontsize=11)
+    legend.get_frame().set_facecolor('white')
+    legend.get_frame().set_alpha(0.95)
+    
+    # Grid sutil
+    ax.grid(True, alpha=0.3, linestyle='--', linewidth=0.5)
+    ax.set_axisbelow(True)
+    
+    # Mejorar spines
+    for spine in ax.spines.values():
+        spine.set_edgecolor('#CCCCCC')
+        spine.set_linewidth(1.2)
+    
+    plt.tight_layout()
+
+    # ================= GUARDAR =================
+    os.makedirs("data/visualizations", exist_ok=True)
+    image_path = f"data/visualizations/{file_id}_pcaGrafica.png"
+    plt.savefig(image_path, dpi=300, bbox_inches='tight', facecolor='white')
+    plt.close()
+
+    # ================= RESPUESTA =================
+    return {
+        "status": "success",
+        "file_id": file_id,
+        "image_path": image_path,
+        "cluster_names": cluster_names,
+        "explained_variance": {
+            "pc1": round(pca.explained_variance_ratio_[0], 4),
+            "pc2": round(pca.explained_variance_ratio_[1], 4),
+            "total": round(sum(pca.explained_variance_ratio_), 4)
+        }
+    }
 
 @app.get("/health")
 def health_check():
