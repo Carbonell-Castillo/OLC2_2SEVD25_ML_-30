@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+.pytest_cache/
+
+# Data - Archivos CSV no se suben
+data/uploads/*.csv
+data/uploads/*.xlsx
+data/uploads/*.xls
+data/exports/*.csv
+data/exports/*.xlsx
+data/exports/*.xls
+data
+
+# Data - PERO sí subir los .gitkeep
+!data/uploads/.gitkeep
+!data/exports/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.local

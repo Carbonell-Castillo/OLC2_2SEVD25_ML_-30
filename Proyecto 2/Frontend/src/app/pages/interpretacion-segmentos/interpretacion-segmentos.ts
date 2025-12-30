@@ -1,29 +1,7 @@
-import { Component, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import {
-  ChartComponent,
-  ApexAxisChartSeries,
-  ApexChart,
-  ApexXAxis,
-  ApexDataLabels,
-  ApexTooltip,
-  ApexStroke,
-  ApexNonAxisChartSeries,
-  ApexTheme,
-  NgApexchartsModule
-} from "ng-apexcharts";
-
-export type ChartOptions = {
-  series: ApexAxisChartSeries | ApexNonAxisChartSeries;
-  chart: ApexChart;
-  xaxis: ApexXAxis;
-  stroke: ApexStroke;
-  tooltip: ApexTooltip;
-  dataLabels: ApexDataLabels;
-  labels: string[];
-  theme: ApexTheme;
-  colors: string[];
-};
+import { Component, OnInit, ChangeDetectorRef, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { NgApexchartsModule } from "ng-apexcharts";
+import { DataService, ClusteringResults } from '../../services/data.service';
 
 @Component({
   selector: 'app-interpretacion-segmentos',
@@ -31,46 +9,92 @@ export type ChartOptions = {
   imports: [CommonModule, NgApexchartsModule],
   templateUrl: './interpretacion-segmentos.html'
 })
-export class InterpretacionSegmentosComponent {
-  public chartDonut: Partial<ChartOptions> | any;
-  public chartLine: Partial<ChartOptions> | any;
+export class InterpretacionSegmentosComponent implements OnInit {
+  public chartDonut: any;
+  public chartLine: any;
+  public clusterList: any[] = [];
+  public isLoading: boolean = true;
 
-  mockData = [
-    { name: 'Segmento A - Premium', val1: 85, val2: 92, status: 'up' },
-    { name: 'Segmento B - Ocasional', val1: 42, val2: 58, status: 'down' },
-    { name: 'Segmento C - Leales', val1: 76, val2: 88, status: 'up' },
-    { name: 'Segmento D - Riesgo', val1: 15, val2: 30, status: 'down' }
-  ];
-
-  constructor() {
-    this.initCharts();
+  constructor(
+    private dataService: DataService,
+    private cdr: ChangeDetectorRef,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    this.initEmptyCharts();
   }
 
-  initCharts() {
-    // Gráfica de Donut (Distribución)
+  ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.cargarDatosReales();
+    }
+  }
+
+  private cargarDatosReales(): void {
+    const fileId = localStorage.getItem('lastFileId');
+    if (!fileId) {
+      this.isLoading = false;
+      return;
+    }
+
+    this.dataService.getResults(fileId).subscribe({
+      next: (res: ClusteringResults) => {
+        this.mapDataToCharts(res);
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar segmentos:', err);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  private mapDataToCharts(res: ClusteringResults): void {
+    // 1. Mapear datos para la Tabla
+    this.clusterList = res.clusters.map(c => ({
+      name: `Cluster ${c.cluster_id}: ${c.main_channel}`,
+      val1: c.percentage.toFixed(1),
+      val2: c.size,
+      status: c.percentage > 25 ? 'up' : 'down', // Lógica de negocio ficticia
+      description: c.description
+    }));
+
+    // 2. Mapear datos para el Donut
     this.chartDonut = {
-      series: [44, 55, 13, 33],
-      chart: { type: "donut", height: 300, foreColor: '#94a3b8' },
-      labels: ["Premium", "Ocasional", "Leales", "Riesgo"],
-      colors: ["#a855f7", "#06b6d4", "#3b82f6", "#f43f5e"],
-      stroke: { show: false },
-      dataLabels: { enabled: false },
-      legend: { position: 'bottom' }
+      ...this.chartDonut,
+      series: res.clusters.map(c => c.size),
+      labels: res.clusters.map(c => `Grupo ${c.cluster_id}`)
     };
 
-    // Gráfica de Líneas (Tendencias)
+    // 3. Simular Línea de Evolución (Basada en la calidad del modelo)
+    // Nota: Como K-Means es estático, simulamos una tendencia basada en el score
+    const baseScore = res.metrics.silhouette_score * 100;
+    this.chartLine.series = [
+      { 
+        name: "Calidad de Segmentación", 
+        data: [baseScore - 10, baseScore - 5, baseScore - 2, baseScore, baseScore + 2, baseScore + 1] 
+      }
+    ];
+  }
+
+  private initEmptyCharts() {
+    this.chartDonut = {
+      series: [],
+      chart: { type: "donut", height: 300, foreColor: '#94a3b8' },
+      labels: [],
+      colors: ["#a855f7", "#06b6d4", "#3b82f6", "#f43f5e", "#eab308"],
+      stroke: { show: false },
+      dataLabels: { enabled: true },
+      legend: { position: 'bottom', labels: { colors: '#94a3b8' } }
+    };
+
     this.chartLine = {
-      series: [
-        { name: "Satisfacción", data: [31, 40, 28, 51, 42, 109, 100] },
-        { name: "Retención", data: [11, 32, 45, 32, 34, 52, 41] }
-      ],
+      series: [],
       chart: { type: "area", height: 300, toolbar: { show: false }, foreColor: '#94a3b8' },
-      colors: ["#a855f7", "#06b6d4"],
+      colors: ["#a855f7"],
       dataLabels: { enabled: false },
       stroke: { curve: "smooth", width: 3 },
-      xaxis: {
-        categories: ["Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom"]
-      },
+      xaxis: { categories: ["V1", "V2", "V3", "V4", "V5", "Actual"], labels: { style: { colors: '#94a3b8' } } },
       tooltip: { theme: "dark" },
       grid: { borderColor: "#334155" }
     };
