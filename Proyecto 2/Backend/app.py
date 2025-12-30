@@ -2,6 +2,7 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from sklearn.decomposition import PCA
 import pandas as pd
@@ -29,8 +30,19 @@ app = FastAPI(
     description="API para clustering de clientes con K-Means",
     version="1.0.0"
 )
+# 1. Obtener la ruta absoluta a la carpeta de imágenes
+current_dir = os.path.dirname(os.path.abspath(__file__))
+visualizations_path = os.path.join(current_dir, "data", "visualizations")
 
+# 2. Montar la carpeta como recursos estáticos
+# Esto mapea la URL /visualizations a la carpeta física
+app.mount("/static", StaticFiles(directory=visualizations_path), name="static")
+
+#Ahora pra reports
+reports_path = os.path.join(current_dir, "data", "reports")
+app.mount("/reports", StaticFiles(directory=reports_path), name="reports")
 # Configurar CORS (permite conexión desde frontend)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -447,6 +459,8 @@ def generate_visualization(file_id: str):
     # ================= GUARDAR =================
     os.makedirs("data/visualizations", exist_ok=True)
     image_path = f"data/visualizations/{file_id}_pcaGrafica.png"
+    #obtener la path absoluta
+#    image_path = os.path.abspath(image_path)
     plt.savefig(image_path, dpi=300, bbox_inches='tight', facecolor='white')
     plt.close()
 
@@ -769,3 +783,7 @@ def health_check():
         "files_uploaded": len(storage),
         "models_trained": len([f for f in storage.values() if "results" in f])
     }
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
