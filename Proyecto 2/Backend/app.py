@@ -353,7 +353,7 @@ def get_metrics_info():
 @app.get("/visualization/{file_id}")
 def generate_visualization(file_id: str):
     """
-    Generar visualización PCA 2D con nombres dinámicos de clusters
+    Generar visualización PCA 2D optimizada (sin reprocesar datos)
     """
 
     # ================= VALIDAR =================
@@ -372,23 +372,58 @@ def generate_visualization(file_id: str):
     if "cluster" not in df.columns:
         raise HTTPException(status_code=400, detail="Clusters no disponibles")
 
-    # ================= PREPROCESAMIENTO PARA PCA =================
-    preprocessor = DataPreprocessor()
-    X_scaled, _, feature_names = preprocessor.load_and_clean(clustered_path)
+    # ================= FEATURES (SIN REPROCESAR) =================
+    numeric_cols = [
+        "frecuencia_compra",
+        "monto_total_gastado",
+        "monto_promedio_compra",
+        "dias_desde_ultima_compra",
+        "antiguedad_cliente_meses",
+        "numero_productos_distintos"
+    ]
+
+    # Obtener todas las columnas dummy que existan
+    dummy_cols = [c for c in df.columns if c.startswith("canal_")]
+    
+    # Combinar features
+    features = numeric_cols + dummy_cols
+    
+    # CRÍTICO: Verificar que todas las features existen en el dataframe
+    available_features = [f for f in features if f in df.columns]
+    
+    if not available_features:
+        raise HTTPException(
+            status_code=400, 
+            detail="No se encontraron features válidas para la visualización"
+        )
+    
+    # SOLUCIÓN: Seleccionar SOLO las columnas que existen y son numéricas
+    X = df[available_features].select_dtypes(include=[np.number]).values
+    
+    # Verificar que tenemos datos válidos
+    if X.shape[0] == 0 or X.shape[1] == 0:
+        raise HTTPException(
+            status_code=400,
+            detail="No hay datos numéricos válidos para la visualización"
+        )
 
     # ================= PCA =================
-    pca = PCA(n_components=2)
-    X_pca = pca.fit_transform(X_scaled)
+    pca = PCA(n_components=2, random_state=42)
+    X_pca = pca.fit_transform(X)
 
     df["pca_1"] = X_pca[:, 0]
     df["pca_2"] = X_pca[:, 1]
 
-    # ================= FUNCIÓN PARA NOMBRE DE CLUSTER =================
+    # ================= NOMBRE DE CLUSTER =================
     def infer_cluster_name(cluster_df):
         if "canal_principal" not in cluster_df.columns:
             return "Clientes Mixtos"
 
-        canal = cluster_df["canal_principal"].mode().iloc[0]
+        canal = cluster_df["canal_principal"].mode()
+        if len(canal) == 0:
+            return "Clientes Mixtos"
+            
+        canal = canal.iloc[0]
 
         if canal == "web":
             return "Clientes Digitales"
@@ -399,69 +434,45 @@ def generate_visualization(file_id: str):
 
         return "Clientes Mixtos"
 
-    # ================= CONFIGURACIÓN DE ESTILO =================
-    plt.style.use('seaborn-v0_8-darkgrid')
-    fig, ax = plt.subplots(figsize=(12, 8), facecolor='white')
-    
-    # Paleta de colores moderna
-    colors = ['#2E86AB', '#A23B72', '#F18F01', '#C73E1D', '#6A994E', '#BC4B51']
-    
+    # ================= GRAFICAR =================
+    plt.style.use("seaborn-v0_8-darkgrid")
+    fig, ax = plt.subplots(figsize=(12, 8), facecolor="white")
+
+    palette = ['#2E86AB', '#A23B72', '#F18F01', '#C73E1D', '#6A994E', '#BC4B51']
     cluster_names = {}
 
-    # ================= GRAFICAR =================
     for idx, cluster_id in enumerate(sorted(df["cluster"].unique())):
         subset = df[df["cluster"] == cluster_id]
-        cluster_name = infer_cluster_name(subset)
-        cluster_names[int(cluster_id)] = cluster_name
-        
-        color = colors[idx % len(colors)]
-        
-        # Scatter con borde
+        name = infer_cluster_name(subset)
+        cluster_names[int(cluster_id)] = name
+
         ax.scatter(
             subset["pca_1"],
             subset["pca_2"],
-            label=f"{cluster_name}",
+            label=name,
             alpha=0.7,
             s=80,
-            color=color,
-            edgecolors='white',
+            color=palette[idx % len(palette)],
+            edgecolors="white",
             linewidth=0.5
         )
 
-    # ================= ESTILIZAR EJES Y TÍTULO =================
+    # ================= ESTILO =================
     var_pc1 = pca.explained_variance_ratio_[0] * 100
     var_pc2 = pca.explained_variance_ratio_[1] * 100
-    
-    ax.set_xlabel(f'PC1: Intensidad de consumo ({var_pc1:.1f}% varianza)', 
-                  fontsize=12, fontweight='bold', color='#333333')
-    ax.set_ylabel(f'PC2: Variación en hábitos ({var_pc2:.1f}% varianza)', 
-                  fontsize=12, fontweight='bold', color='#333333')
-    ax.set_title('Segmentación de Clientes mediante PCA', 
-                 fontsize=16, fontweight='bold', color='#1a1a1a', pad=20)
-    
-    # Leyenda mejorada
-    legend = ax.legend(loc='best', frameon=True, shadow=True, 
-                      fontsize=10, title='Segmentos', title_fontsize=11)
-    legend.get_frame().set_facecolor('white')
-    legend.get_frame().set_alpha(0.95)
-    
-    # Grid sutil
-    ax.grid(True, alpha=0.3, linestyle='--', linewidth=0.5)
-    ax.set_axisbelow(True)
-    
-    # Mejorar spines
-    for spine in ax.spines.values():
-        spine.set_edgecolor('#CCCCCC')
-        spine.set_linewidth(1.2)
-    
+
+    ax.set_xlabel(f"PC1 ({var_pc1:.1f}% varianza)", fontsize=12, fontweight="bold")
+    ax.set_ylabel(f"PC2 ({var_pc2:.1f}% varianza)", fontsize=12, fontweight="bold")
+    ax.set_title("Segmentación de Clientes mediante PCA", fontsize=16, fontweight="bold")
+
+    ax.legend(title="Segmentos")
+    ax.grid(True, alpha=0.3)
     plt.tight_layout()
 
     # ================= GUARDAR =================
     os.makedirs("data/visualizations", exist_ok=True)
     image_path = f"data/visualizations/{file_id}_pcaGrafica.png"
-    #obtener la path absoluta
-#    image_path = os.path.abspath(image_path)
-    plt.savefig(image_path, dpi=300, bbox_inches='tight', facecolor='white')
+    plt.savefig(image_path, dpi=300, bbox_inches="tight")
     plt.close()
 
     # ================= RESPUESTA =================
