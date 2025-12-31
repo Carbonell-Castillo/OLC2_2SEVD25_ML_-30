@@ -1,0 +1,28 @@
+<aside class="bg-sidebar-dark w-64 p-6 flex flex-col shadow-xl z-10 sticky top-0 h-screen">
+    <div class="logo-area text-2xl font-bold border-b border-gray-700 pb-4 mb-6">
+        <i class="fas fa-brain text-accent-purple mr-3"></i> InsightCluster
+    </div>
+    
+    <nav class="flex-grow">
+        <ul>
+            <li class="nav-item mb-2" *ngFor="let item of navItems">
+                <a 
+                    [routerLink]="item.route" 
+                    routerLinkActive="border-l-4 border-accent-purple bg-card-dark text-white"
+                    [routerLinkActiveOptions]="{ exact: true }"
+                    class="flex items-center p-3 rounded-lg hover:bg-card-dark hover:text-white transition duration-200 group"
+                    [ngClass]="(item.route === '/carga-masiva' ? 'text-white border-l-4 border-accent-purple bg-card-dark' : 'text-gray-400')"
+                >
+                    <i [class]="item.icon + ' w-6 text-xl mr-3 transition'" [ngClass]="item.colorClass"></i> 
+                    {{ item.name }}
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="sidebar-footer pt-6 border-t border-gray-700">
+        <button class="w-full py-2 rounded-lg font-semibold bg-gradient-to-r from-purple-800 to-accent-purple hover:from-purple-900 hover:to-purple-700 transition duration-300 shadow-lg shadow-purple-900/50">
+            <i class="fas fa-star mr-2"></i> Ir a repositorio
+        </button>
+    </div>
+</aside>

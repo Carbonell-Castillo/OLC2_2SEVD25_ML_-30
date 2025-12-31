@@ -1,0 +1,45 @@
+<section class="content-section animate-fade-in">
+    <div class="mb-8">
+        <h2 class="text-3xl font-bold text-white mb-2">
+            <i class="fas fa-file-export text-accent-purple mr-2"></i> Exportación de reportes
+        </h2>
+        <p class="text-gray-400">Descargue los datos segmentados para utilizarlos en sus campañas de marketing o herramientas de BI.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
+        
+<div class="bg-card-dark p-10 rounded-2xl shadow-2xl border border-gray-800 flex flex-col items-center justify-center transition-all duration-300 hover:border-accent-purple group">
+        <div class="mb-6 bg-primary-dark p-8 rounded-xl group-hover:scale-110 transition-transform duration-300">
+            <i class="fas" [ngClass]="isDownloadingCSV ? 'fa-spinner fa-spin' : 'fa-file-csv'" class="text-6xl text-accent-purple"></i>
+        </div>
+        <h3 class="text-xl font-semibold text-white mb-4">Exportar CSV</h3>
+        <button (click)="descargarCSV()" [disabled]="isDownloadingCSV"
+            class="w-full py-3 px-6 rounded-lg bg-gradient-to-r from-purple-800 to-accent-purple hover:from-purple-900 hover:to-purple-700 text-white font-bold transition duration-300 shadow-lg flex items-center justify-center">
+            <i class="fas fa-table mr-2"></i> {{ isDownloadingCSV ? 'Descargando...' : 'Descargar Datos' }}
+        </button>
+    </div>
+
+    <div class="bg-card-dark p-10 rounded-2xl shadow-2xl border border-gray-800 flex flex-col items-center justify-center transition-all duration-300 hover:border-accent-cyan group">
+        <div class="mb-6 bg-primary-dark p-8 rounded-xl group-hover:scale-110 transition-transform duration-300">
+            <i class="fas" [ngClass]="isExportingPDF ? 'fa-spinner fa-spin' : 'fa-file-pdf'" class="text-6xl text-accent-cyan"></i>
+        </div>
+        <h3 class="text-xl font-semibold text-white mb-4">Exportar PDF</h3>
+        <button (click)="descargarPDF()" [disabled]="isExportingPDF"
+            class="w-full py-3 px-6 rounded-lg border-2 border-accent-cyan text-accent-cyan hover:bg-accent-cyan hover:text-white font-bold transition duration-300 flex items-center justify-center">
+            <i class="fas fa-file-invoice mr-2"></i> {{ isExportingPDF ? 'Generando...' : 'Obtener Informe PDF' }}
+        </button>
+    </div>
+
+
+    </div>
+
+    <div class="mt-12 bg-accent-purple/5 border border-accent-purple/20 p-6 rounded-xl flex items-start gap-4">
+        <i class="fas fa-shield-alt text-accent-purple mt-1"></i>
+        <div>
+            <h4 class="text-white font-bold text-sm">Privacidad de datos</h4>
+            <p class="text-xs text-gray-400 mt-1">
+                Los archivos generados contienen información sensible. Asegúrese de cumplir con las normativas locales de protección de datos (GDPR/LGPD) al compartir estos reportes.
+            </p>
+        </div>
+    </div>
+</section>
